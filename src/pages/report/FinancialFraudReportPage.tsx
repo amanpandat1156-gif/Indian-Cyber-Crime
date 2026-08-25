@@ -1,0 +1,730 @@
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import {
+  UploadCloud,
+  FileText,
+  CheckCircle2,
+  AlertCircle,
+  ArrowRight,
+  ArrowLeft,
+  IndianRupee,
+  Calendar,
+  ShieldCheck,
+  Edit2,
+  X,
+  PhoneCall,
+  Loader2
+} from 'lucide-react';
+import { Container } from '../../components/common/Container';
+import { useAuth } from '../../context/AuthContext';
+import { evidenceService } from '../../services/evidenceService';
+import { complaintService } from '../../services/complaintService';
+import { Evidence, ExtractedFinancialData, Complaint } from '../../types';
+
+export const FinancialFraudReportPage: React.FC = () => {
+  const { user, openLoginModal } = useAuth();
+
+  // Wizard Steps: 1 = Incident Details, 2 = Evidence Upload & OCR, 3 = Extracted Data Review, 4 = Final Review, 5 = Submitted
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4 | 5>(1);
+
+  // Form State
+  const [incidentDate, setIncidentDate] = useState(new Date().toISOString().split('T')[0]);
+  const [amount, setAmount] = useState<string>('48500');
+  const [paymentMode, setPaymentMode] = useState<'UPI' | 'NET_BANKING' | 'CREDIT_CARD' | 'DEBIT_CARD' | 'WALLET'>('UPI');
+  const [title, setTitle] = useState('Unauthorized UPI Transfer via Fake Electricity Bill QR');
+  const [description, setDescription] = useState('Received an SMS claiming electricity disconnection. Clicked link and scanned QR code which deducted funds from my bank account.');
+
+  // Evidence & OCR State
+  const [evidenceList, setEvidenceList] = useState<Evidence[]>([]);
+  const [uploadingStatus, setUploadingStatus] = useState<'idle' | 'uploading' | 'processing' | 'processed'>('idle');
+  const [extractedData, setExtractedData] = useState<ExtractedFinancialData | null>(null);
+  const [isEditingExtracted, setIsEditingExtracted] = useState(false);
+  const [extractedConfirmed, setExtractedConfirmed] = useState(false);
+
+  // Submission State
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [createdComplaint, setCreatedComplaint] = useState<Complaint | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  // Handle Mock/Real File Upload
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setFormError(null);
+    setUploadingStatus('uploading');
+
+    const res = await evidenceService.processFileUpload(file, (status) => {
+      setUploadingStatus(status);
+    });
+
+    if (res.success && res.data) {
+      setEvidenceList((prev) => [...prev, res.data!]);
+      if (res.data.extractedData) {
+        setExtractedData(res.data.extractedData);
+      }
+      setUploadingStatus('idle');
+    } else {
+      setUploadingStatus('idle');
+      setFormError(res.error || 'Failed to process evidence file.');
+    }
+  };
+
+  // Simulate Sample Evidence Upload for Instant Testing
+  const handleAddSampleEvidence = async () => {
+    setFormError(null);
+    setUploadingStatus('uploading');
+
+    // Create a mock file
+    const sampleFile = new File(['mock transaction screenshot'], 'upi_payment_receipt_48500.png', {
+      type: 'image/png',
+    });
+
+    const res = await evidenceService.processFileUpload(sampleFile, (status) => {
+      setUploadingStatus(status);
+    });
+
+    if (res.success && res.data) {
+      setEvidenceList((prev) => [...prev, res.data!]);
+      if (res.data.extractedData) {
+        setExtractedData(res.data.extractedData);
+      }
+      setUploadingStatus('idle');
+    }
+  };
+
+  const handleRemoveEvidence = (id: string) => {
+    setEvidenceList((prev) => prev.filter((item) => item.id !== id));
+    if (evidenceList.length <= 1) {
+      setExtractedData(null);
+      setExtractedConfirmed(false);
+    }
+  };
+
+  const handleSubmitComplaint = async () => {
+    setFormError(null);
+    setIsSubmitting(true);
+
+    const res = await complaintService.createComplaint({
+      userId: user?.id,
+      type: 'FINANCIAL_FRAUD',
+      title: title.trim(),
+      description: description.trim(),
+      financialDetails: extractedData || {
+        amount: Number(amount) || 0,
+        date: incidentDate,
+        transactionId: `TXN${Math.floor(1000000000 + Math.random() * 9000000000)}`,
+        bankName: 'State Bank of India',
+        paymentMode,
+      },
+      evidence: evidenceList,
+      incidentDetails: {
+        incidentDate,
+        platform: paymentMode,
+      },
+    });
+
+    setIsSubmitting(false);
+
+    if (res.success && res.data) {
+      setCreatedComplaint(res.data);
+      setCurrentStep(5);
+    } else {
+      setFormError(res.error || 'Failed to submit complaint.');
+    }
+  };
+
+  return (
+    <div className="w-full bg-[#F8F7F3] min-h-screen py-8 sm:py-12">
+      <Container size="md">
+        {/* Top Breadcrumb & 1930 Notice */}
+        <div className="mb-6 flex items-center justify-between">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#5E6B73] hover:text-[#12304A]"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back to Home</span>
+          </Link>
+
+          <a
+            href="tel:1930"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#FDE8E8] text-[#8B2626] text-xs font-bold hover:bg-[#FCD8D8] transition-colors"
+          >
+            <PhoneCall className="w-3 h-3" />
+            <span>Golden Hour Helpline: 1930</span>
+          </a>
+        </div>
+
+        {/* Step Progression Bar */}
+        {currentStep < 5 && (
+          <div className="mb-8">
+            <div className="flex items-center justify-between text-xs font-semibold text-[#5E6B73] mb-2">
+              <span className={currentStep >= 1 ? 'text-[#12304A] font-bold' : ''}>1. Incident Details</span>
+              <span className={currentStep >= 2 ? 'text-[#12304A] font-bold' : ''}>2. Upload Evidence</span>
+              <span className={currentStep >= 3 ? 'text-[#12304A] font-bold' : ''}>3. Extraction Review</span>
+              <span className={currentStep >= 4 ? 'text-[#12304A] font-bold' : ''}>4. Confirm & Submit</span>
+            </div>
+            <div className="w-full h-1.5 bg-[#E2E6E8] rounded-full overflow-hidden">
+              <div
+                className="h-full bg-[#12304A] transition-all duration-300"
+                style={{ width: `${((currentStep - 1) / 3) * 100}%` }}
+              ></div>
+            </div>
+          </div>
+        )}
+
+        {formError && (
+          <div className="mb-6 p-4 rounded-[8px] bg-[#FDF2F2] border border-[#F8D7DA] text-sm text-[#992E2E] flex items-center gap-2.5">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>{formError}</span>
+          </div>
+        )}
+
+        {/* STEP 1: INCIDENT OVERVIEW & DETAILS */}
+        {currentStep === 1 && (
+          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-6 sm:p-8 shadow-card">
+            <div className="mb-6">
+              <div className="text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
+                EVIDENCE &rarr; STRUCTURED COMPLAINT
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A] tracking-tight">
+                Report Financial Fraud
+              </h1>
+              <p className="mt-1.5 text-sm text-[#5E6B73]">
+                Tell us what happened with your transaction. We'll guide you through attaching evidence and initiating inter-bank fund recovery.
+              </p>
+            </div>
+
+            <div className="space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-[#1C252C] mb-1.5">
+                    Estimated Loss Amount (₹) <span className="text-[#8B2626]">*</span>
+                  </label>
+                  <div className="relative">
+                    <IndianRupee className="absolute left-3 top-2.5 w-4 h-4 text-[#5E6B73]" />
+                    <input
+                      type="number"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      placeholder="e.g. 48500"
+                      className="w-full pl-9 pr-3 py-2 text-sm bg-[#FBFBFA] border border-[#DDE2E4] rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#1C252C] mb-1.5">
+                    Date of Incident / Debit <span className="text-[#8B2626]">*</span>
+                  </label>
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-2.5 w-4 h-4 text-[#5E6B73]" />
+                    <input
+                      type="date"
+                      value={incidentDate}
+                      onChange={(e) => setIncidentDate(e.target.value)}
+                      className="w-full pl-9 pr-3 py-2 text-sm bg-[#FBFBFA] border border-[#DDE2E4] rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#1C252C] mb-1.5">
+                  Payment Method Involved
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
+                  {[
+                    { key: 'UPI', label: 'UPI (GPay / PhonePe)' },
+                    { key: 'NET_BANKING', label: 'Net Banking' },
+                    { key: 'DEBIT_CARD', label: 'Debit Card' },
+                    { key: 'CREDIT_CARD', label: 'Credit Card' },
+                    { key: 'WALLET', label: 'Wallet / Others' },
+                  ].map((mode) => (
+                    <button
+                      key={mode.key}
+                      type="button"
+                      onClick={() => setPaymentMode(mode.key as any)}
+                      className={`py-2 px-3 rounded border text-center font-medium transition-colors ${
+                        paymentMode === mode.key
+                          ? 'bg-[#12304A] text-white border-[#12304A] font-bold'
+                          : 'bg-[#FBFBFA] text-[#1C252C] border-[#DDE2E4] hover:bg-[#F3F6F8]'
+                      }`}
+                    >
+                      {mode.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#1C252C] mb-1.5">
+                  Brief Incident Title <span className="text-[#8B2626]">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="e.g. Unauthorized UPI transfer via QR code or Fake Customer Care call"
+                  className="w-full px-3 py-2 text-sm bg-[#FBFBFA] border border-[#DDE2E4] rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#1C252C] mb-1.5">
+                  What happened? (Plain Language Explanation) <span className="text-[#8B2626]">*</span>
+                </label>
+                <textarea
+                  rows={4}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Please describe how the fraud occurred, what link or QR was clicked, and any suspect mobile or UPI IDs."
+                  className="w-full px-3 py-2 text-sm bg-[#FBFBFA] border border-[#DDE2E4] rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-[#DDE2E4] flex justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  if (!title.trim() || !description.trim()) {
+                    setFormError('Please complete all required fields.');
+                    return;
+                  }
+                  setFormError(null);
+                  setCurrentStep(2);
+                }}
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-semibold hover:bg-[#0B2235] transition-colors"
+              >
+                <span>Continue to Evidence Upload</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 2: EVIDENCE UPLOAD & OCR EXTRACTION SIMULATION */}
+        {currentStep === 2 && (
+          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-6 sm:p-8 shadow-card">
+            <div className="mb-6">
+              <div className="text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
+                STEP 2 OF 4
+              </div>
+              <h2 className="text-2xl font-bold text-[#12304A] tracking-tight">
+                Upload Transaction Evidence
+              </h2>
+              <p className="mt-1 text-sm text-[#5E6B73]">
+                Upload screenshots of the transaction receipt, SMS alerts, or bank debit statement. Our automated parser will extract key details for your review.
+              </p>
+            </div>
+
+            {/* Drag and Drop Zone */}
+            <div className="border-2 border-dashed border-[#CCD3D6] hover:border-[#12304A] rounded-[10px] p-8 text-center bg-[#FBFBFA] transition-colors">
+              <input
+                type="file"
+                id="evidence-file-input"
+                onChange={handleFileUpload}
+                accept="image/*,application/pdf"
+                className="hidden"
+              />
+              <label
+                htmlFor="evidence-file-input"
+                className="cursor-pointer flex flex-col items-center justify-center"
+              >
+                <div className="w-12 h-12 rounded-full bg-[#EDF3F7] text-[#12304A] flex items-center justify-center mb-3">
+                  <UploadCloud className="w-6 h-6 stroke-[1.8]" />
+                </div>
+                <div className="text-sm font-bold text-[#12304A]">
+                  Click to select or drag & drop files
+                </div>
+                <div className="mt-1 text-xs text-[#5E6B73]">
+                  Supports PNG, JPG, PDF up to 10 MB
+                </div>
+              </label>
+
+              <div className="mt-4 pt-4 border-t border-[#E2E6E8] flex justify-center">
+                <button
+                  type="button"
+                  onClick={handleAddSampleEvidence}
+                  className="text-xs font-semibold px-3 py-1.5 rounded-md bg-[#EDF3F7] text-[#12304A] hover:bg-[#DDE7F0] transition-colors"
+                >
+                  + Add Sample Transaction Screenshot (Auto-Test)
+                </button>
+              </div>
+            </div>
+
+            {/* Uploading / Processing Animation */}
+            {uploadingStatus !== 'idle' && (
+              <div className="mt-6 p-4 rounded-[8px] bg-[#EDF3F7] border border-[#CCDCE8] flex items-center gap-3 animate-pulse">
+                <Loader2 className="w-5 h-5 text-[#12304A] animate-spin" />
+                <div className="text-xs text-[#12304A]">
+                  {uploadingStatus === 'uploading'
+                    ? 'Uploading evidence file securely...'
+                    : 'Extracting transaction details, reference IDs, and bank metadata...'}
+                </div>
+              </div>
+            )}
+
+            {/* Attached Evidence List */}
+            {evidenceList.length > 0 && (
+              <div className="mt-6 space-y-2.5">
+                <h3 className="text-xs font-bold text-[#1C252C] uppercase tracking-wider">
+                  Attached Files ({evidenceList.length})
+                </h3>
+                {evidenceList.map((ev) => (
+                  <div
+                    key={ev.id}
+                    className="flex items-center justify-between p-3.5 bg-[#F8F9FA] rounded-[8px] border border-[#DDE2E4]"
+                  >
+                    <div className="flex items-center gap-3">
+                      <FileText className="w-4 h-4 text-[#12304A]" />
+                      <div>
+                        <div className="text-xs font-bold text-[#1C252C]">{ev.fileName}</div>
+                        <div className="text-[11px] text-[#5E6B73]">{ev.fileSize} &bull; {ev.status}</div>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveEvidence(ev.id)}
+                      className="p-1 text-[#5E6B73] hover:text-[#992E2E]"
+                      title="Remove file"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="mt-8 pt-6 border-t border-[#DDE2E4] flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setCurrentStep(1)}
+                className="px-4 py-2 rounded-md border border-[#DDE2E4] text-xs font-semibold text-[#5E6B73] hover:bg-[#F8F7F3]"
+              >
+                Back
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (evidenceList.length === 0) {
+                    handleAddSampleEvidence().then(() => setCurrentStep(3));
+                  } else {
+                    setCurrentStep(3);
+                  }
+                }}
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-semibold hover:bg-[#0B2235] transition-colors"
+              >
+                <span>Review Extracted Information</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 3: CITIZEN REVIEW OF EXTRACTED INFORMATION (OCR) */}
+        {currentStep === 3 && (
+          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-6 sm:p-8 shadow-card">
+            <div className="mb-6">
+              <div className="text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
+                AI ASSISTS. CITIZEN CONFIRMS.
+              </div>
+              <h2 className="text-2xl font-bold text-[#12304A] tracking-tight">
+                We Found These Details
+              </h2>
+              <p className="mt-1 text-sm text-[#5E6B73]">
+                Please review the extracted information below. You can confirm or modify any fields before submitting.
+              </p>
+            </div>
+
+            {/* Extracted Details Card */}
+            <div className="bg-[#F8F9FA] rounded-[10px] border border-[#DDE2E4] p-5 sm:p-6 mb-6">
+              <div className="flex items-center justify-between pb-4 border-b border-[#E2E6E8] mb-4">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-5 h-5 text-[#237A57]" />
+                  <span className="text-xs font-bold text-[#12304A] uppercase tracking-wider">
+                    Extracted Transaction Record
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsEditingExtracted(!isEditingExtracted)}
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#12304A] hover:underline"
+                >
+                  <Edit2 className="w-3.5 h-3.5" />
+                  <span>{isEditingExtracted ? 'Done Editing' : 'Edit Details'}</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <div>
+                  <span className="text-[#5E6B73] block mb-1">Debited Amount</span>
+                  {isEditingExtracted ? (
+                    <input
+                      type="number"
+                      value={extractedData?.amount || amount}
+                      onChange={(e) =>
+                        setExtractedData((prev) => ({
+                          ...prev!,
+                          amount: Number(e.target.value),
+                        }))
+                      }
+                      className="w-full px-2.5 py-1.5 bg-white border border-[#DDE2E4] rounded font-bold text-sm"
+                    />
+                  ) : (
+                    <strong className="text-sm text-[#12304A]">
+                      ₹{(extractedData?.amount || Number(amount)).toLocaleString('en-IN')}
+                    </strong>
+                  )}
+                </div>
+
+                <div>
+                  <span className="text-[#5E6B73] block mb-1">Transaction Ref / UTR</span>
+                  {isEditingExtracted ? (
+                    <input
+                      type="text"
+                      value={extractedData?.transactionId || 'TXN8923481092'}
+                      onChange={(e) =>
+                        setExtractedData((prev) => ({
+                          ...prev!,
+                          transactionId: e.target.value,
+                        }))
+                      }
+                      className="w-full px-2.5 py-1.5 bg-white border border-[#DDE2E4] rounded font-mono text-xs"
+                    />
+                  ) : (
+                    <strong className="text-xs font-mono text-[#1C252C]">
+                      {extractedData?.transactionId || 'TXN8923481092'}
+                    </strong>
+                  )}
+                </div>
+
+                <div>
+                  <span className="text-[#5E6B73] block mb-1">Debited Bank</span>
+                  {isEditingExtracted ? (
+                    <input
+                      type="text"
+                      value={extractedData?.bankName || 'State Bank of India'}
+                      onChange={(e) =>
+                        setExtractedData((prev) => ({
+                          ...prev!,
+                          bankName: e.target.value,
+                        }))
+                      }
+                      className="w-full px-2.5 py-1.5 bg-white border border-[#DDE2E4] rounded text-xs"
+                    />
+                  ) : (
+                    <span className="font-semibold text-[#1C252C]">
+                      {extractedData?.bankName || 'State Bank of India'}
+                    </span>
+                  )}
+                </div>
+
+                <div>
+                  <span className="text-[#5E6B73] block mb-1">Beneficiary Suspect UPI VPA</span>
+                  {isEditingExtracted ? (
+                    <input
+                      type="text"
+                      value={extractedData?.upiId || 'powerbill.desk@okaxis'}
+                      onChange={(e) =>
+                        setExtractedData((prev) => ({
+                          ...prev!,
+                          upiId: e.target.value,
+                        }))
+                      }
+                      className="w-full px-2.5 py-1.5 bg-white border border-[#DDE2E4] rounded text-xs font-mono"
+                    />
+                  ) : (
+                    <span className="font-mono text-xs text-[#992E2E] bg-rose-50 px-2 py-0.5 rounded border border-rose-200">
+                      {extractedData?.upiId || 'powerbill.desk@okaxis'}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Citizen Confirmation Checkbox */}
+            <label className="flex items-start gap-2.5 p-3 rounded-md bg-[#EDF3F7] cursor-pointer">
+              <input
+                type="checkbox"
+                checked={extractedConfirmed}
+                onChange={(e) => setExtractedConfirmed(e.target.checked)}
+                className="mt-0.5 w-4 h-4 rounded text-[#12304A] focus:ring-[#12304A]"
+              />
+              <span className="text-xs text-[#12304A] font-medium leading-relaxed">
+                I have reviewed the extracted transaction details and confirm that they accurately reflect the fraudulent debit.
+              </span>
+            </label>
+
+            <div className="mt-8 pt-6 border-t border-[#DDE2E4] flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setCurrentStep(2)}
+                className="px-4 py-2 rounded-md border border-[#DDE2E4] text-xs font-semibold text-[#5E6B73] hover:bg-[#F8F7F3]"
+              >
+                Back
+              </button>
+
+              <button
+                type="button"
+                disabled={!extractedConfirmed}
+                onClick={() => setCurrentStep(4)}
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-semibold hover:bg-[#0B2235] transition-colors disabled:opacity-50"
+              >
+                <span>Proceed to Final Review</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 4: FINAL REVIEW & OFFICIAL SUBMISSION */}
+        {currentStep === 4 && (
+          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-6 sm:p-8 shadow-card">
+            <div className="mb-6">
+              <div className="text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
+                STEP 4 OF 4
+              </div>
+              <h2 className="text-2xl font-bold text-[#12304A] tracking-tight">
+                Review Structured Complaint
+              </h2>
+              <p className="mt-1 text-sm text-[#5E6B73]">
+                Please review your complaint summary before submitting to the national cybercrime portal.
+              </p>
+            </div>
+
+            <div className="space-y-4 text-xs">
+              <div className="p-4 rounded-md bg-[#FBFBFA] border border-[#DDE2E4]">
+                <div className="text-xs font-bold text-[#12304A] uppercase tracking-wider mb-2">
+                  Incident Overview
+                </div>
+                <div className="space-y-1 text-[#1C252C]">
+                  <div><strong>Title:</strong> {title}</div>
+                  <div><strong>Description:</strong> {description}</div>
+                  <div><strong>Incident Date:</strong> {incidentDate}</div>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-md bg-[#FBFBFA] border border-[#DDE2E4]">
+                <div className="text-xs font-bold text-[#12304A] uppercase tracking-wider mb-2">
+                  Financial Loss Summary
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-[#1C252C]">
+                  <div><strong>Loss Amount:</strong> ₹{(extractedData?.amount || Number(amount)).toLocaleString('en-IN')}</div>
+                  <div><strong>Transaction ID:</strong> {extractedData?.transactionId || 'TXN8923481092'}</div>
+                  <div><strong>Bank:</strong> {extractedData?.bankName || 'State Bank of India'}</div>
+                  <div><strong>Beneficiary UPI:</strong> {extractedData?.upiId || 'powerbill.desk@okaxis'}</div>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-md bg-[#FBFBFA] border border-[#DDE2E4]">
+                <div className="text-xs font-bold text-[#12304A] uppercase tracking-wider mb-2">
+                  Evidence Files Attached ({evidenceList.length})
+                </div>
+                <ul className="list-disc list-inside text-[#5E6B73]">
+                  {evidenceList.map((e) => (
+                    <li key={e.id}>{e.fileName} ({e.fileSize})</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {!user && (
+              <div className="mt-5 p-3.5 rounded-md bg-[#EDF3F7] text-xs text-[#12304A] flex items-center justify-between">
+                <span>You are currently not logged in. An acknowledgement token will be provided for tracking.</span>
+                <button
+                  type="button"
+                  onClick={openLoginModal}
+                  className="font-bold underline ml-2"
+                >
+                  Log in to link complaint
+                </button>
+              </div>
+            )}
+
+            <div className="mt-8 pt-6 border-t border-[#DDE2E4] flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setCurrentStep(3)}
+                className="px-4 py-2 rounded-md border border-[#DDE2E4] text-xs font-semibold text-[#5E6B73] hover:bg-[#F8F7F3]"
+              >
+                Back
+              </button>
+
+              <button
+                type="button"
+                disabled={isSubmitting}
+                onClick={handleSubmitComplaint}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-[#12304A] text-white text-sm font-bold hover:bg-[#0B2235] transition-colors disabled:opacity-50 shadow-sm"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Registering Complaint...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Submit Official Complaint</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 5: SUBMISSION CONFIRMATION & CASE ID ROUTING */}
+        {currentStep === 5 && createdComplaint && (
+          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-6 sm:p-10 shadow-card text-center flex flex-col items-center">
+            <div className="w-14 h-14 rounded-full bg-[#E6F4EA] text-[#237A57] flex items-center justify-center mb-4">
+              <CheckCircle2 className="w-8 h-8" />
+            </div>
+
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-badge bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800 mb-3">
+              COMPLAINT REGISTERED SUCCESSFULLY
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#12304A] tracking-tight">
+              {createdComplaint.complaintNumber}
+            </h1>
+
+            <p className="mt-2 text-sm text-[#5E6B73] max-w-md leading-relaxed">
+              Your financial fraud complaint has been dispatched to <strong>{createdComplaint.assignedTeam.policeStation}</strong> and the 1930 inter-bank freeze protocol has been triggered.
+            </p>
+
+            <div className="w-full max-w-md bg-[#FBFBFA] border border-[#DDE2E4] rounded-md p-4 my-6 text-left text-xs space-y-1.5">
+              <div><strong>Status:</strong> {createdComplaint.statusDisplay}</div>
+              <div><strong>Assigned Cell:</strong> {createdComplaint.assignedTeam.name}</div>
+              <div><strong>Reporting Amount:</strong> ₹{createdComplaint.financialDetails?.amount.toLocaleString('en-IN')}</div>
+              <div><strong>Next Step:</strong> Reviewing bank logs & intermediary payment switches.</div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link
+                to={`/track?number=${createdComplaint.complaintNumber}`}
+                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-bold hover:bg-[#0B2235] transition-colors"
+              >
+                <span>Track My Complaint</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                to="/"
+                className="inline-flex items-center justify-center px-4 py-2.5 rounded-md border border-[#DDE2E4] text-sm font-semibold text-[#5E6B73] hover:bg-[#F8F7F3]"
+              >
+                Return to Home
+              </Link>
+            </div>
+          </div>
+        )}
+      </Container>
+    </div>
+  );
+};

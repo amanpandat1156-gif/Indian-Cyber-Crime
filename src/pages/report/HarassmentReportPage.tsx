@@ -1,0 +1,300 @@
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowLeft, ArrowRight, CheckCircle2, AlertTriangle, FileText, UploadCloud, X, Loader2 } from 'lucide-react';
+import { Container } from '../../components/common/Container';
+import { useAuth } from '../../context/AuthContext';
+import { complaintService } from '../../services/complaintService';
+import { evidenceService } from '../../services/evidenceService';
+import { Evidence, Complaint } from '../../types';
+
+export const HarassmentReportPage: React.FC = () => {
+  const { user } = useAuth();
+  const [step, setStep] = useState<1 | 2 | 3>(1);
+
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [platform, setPlatform] = useState('Instagram / WhatsApp');
+  const [suspectDetails, setSuspectDetails] = useState('');
+  const [evidenceList, setEvidenceList] = useState<Evidence[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [createdComplaint, setCreatedComplaint] = useState<Complaint | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const res = await evidenceService.processFileUpload(file);
+    setUploading(false);
+    if (res.success && res.data) {
+      setEvidenceList((prev) => [...prev, res.data!]);
+    }
+  };
+
+  const handleAddSampleChat = async () => {
+    setUploading(true);
+    const sampleFile = new File(['mock chat evidence'], 'threatening_chat_export.pdf', { type: 'application/pdf' });
+    const res = await evidenceService.processFileUpload(sampleFile);
+    setUploading(false);
+    if (res.success && res.data) {
+      setEvidenceList((prev) => [...prev, res.data!]);
+    }
+  };
+
+  const handleSubmit = async () => {
+    setError(null);
+    setSubmitting(true);
+    const res = await complaintService.createComplaint({
+      userId: user?.id,
+      type: 'CYBER_HARASSMENT',
+      title: title || 'Cyber Harassment & Threat Report',
+      description,
+      incidentDetails: {
+        incidentDate: new Date().toISOString().split('T')[0],
+        platform,
+        suspectDetails,
+      },
+      evidence: evidenceList,
+    });
+    setSubmitting(false);
+
+    if (res.success && res.data) {
+      setCreatedComplaint(res.data);
+      setStep(3);
+    } else {
+      setError(res.error || 'Failed to submit complaint.');
+    }
+  };
+
+  return (
+    <div className="w-full bg-[#F8F7F3] min-h-screen py-8 sm:py-12">
+      <Container size="md">
+        <div className="mb-6 flex items-center justify-between">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#5E6B73] hover:text-[#12304A]"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back to Home</span>
+          </Link>
+        </div>
+
+        {error && (
+          <div className="mb-6 p-4 rounded-[8px] bg-[#FDF2F2] border border-[#F8D7DA] text-sm text-[#992E2E]">
+            {error}
+          </div>
+        )}
+
+        {step === 1 && (
+          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-6 sm:p-8 shadow-card">
+            {/* Safety Alert Banner */}
+            <div className="mb-6 p-4 rounded-md bg-[#FFF9E6] border border-[#FFE082] text-xs text-[#7A5800] flex items-start gap-2.5">
+              <AlertTriangle className="w-4 h-4 text-[#B7791F] shrink-0 mt-0.5" />
+              <div>
+                <strong className="block font-bold">Immediate Safety Notice</strong>
+                If you are facing immediate physical harm or life-threatening extortion, please call emergency police at <strong>112</strong> immediately.
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <div className="text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
+                INTENT FIRST REPORTING
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A] tracking-tight">
+                Someone Is Harassing or Threatening Me
+              </h1>
+              <p className="mt-1.5 text-sm text-[#5E6B73]">
+                Tell us what happened in plain language. You can share screenshots of chat messages, extortion emails, or fake profiles.
+              </p>
+            </div>
+
+            <div className="space-y-4 text-xs">
+              <div>
+                <label className="block text-xs font-bold text-[#1C252C] mb-1.5">
+                  Platform or App Involved
+                </label>
+                <input
+                  type="text"
+                  value={platform}
+                  onChange={(e) => setPlatform(e.target.value)}
+                  placeholder="e.g. WhatsApp, Instagram, Telegram, SMS"
+                  className="w-full px-3 py-2 text-sm bg-[#FBFBFA] border border-[#DDE2E4] rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#1C252C] mb-1.5">
+                  Brief Summary / Title <span className="text-[#8B2626]">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="e.g. Blackmail messages received on WhatsApp from unknown caller"
+                  className="w-full px-3 py-2 text-sm bg-[#FBFBFA] border border-[#DDE2E4] rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#1C252C] mb-1.5">
+                  Tell us what happened <span className="text-[#8B2626]">*</span>
+                </label>
+                <textarea
+                  rows={4}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Describe the nature of the messages, what demands were made, and any dates/times."
+                  className="w-full px-3 py-2 text-sm bg-[#FBFBFA] border border-[#DDE2E4] rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#1C252C] mb-1.5">
+                  Suspect Contact Details / Social Handle (if known)
+                </label>
+                <input
+                  type="text"
+                  value={suspectDetails}
+                  onChange={(e) => setSuspectDetails(e.target.value)}
+                  placeholder="e.g. Phone number +91-9870001122 or username @fake_profile"
+                  className="w-full px-3 py-2 text-sm bg-[#FBFBFA] border border-[#DDE2E4] rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-[#DDE2E4] flex justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  if (!title.trim() || !description.trim()) {
+                    setError('Please complete the required fields.');
+                    return;
+                  }
+                  setError(null);
+                  setStep(2);
+                }}
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-semibold hover:bg-[#0B2235] transition-colors"
+              >
+                <span>Continue to Attach Proof</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-6 sm:p-8 shadow-card">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-[#12304A] tracking-tight">
+                Attach Chat Screenshots & Evidence
+              </h2>
+              <p className="mt-1 text-sm text-[#5E6B73]">
+                Upload screenshots of threatening messages, call logs, or URLs.
+              </p>
+            </div>
+
+            <div className="border-2 border-dashed border-[#CCD3D6] hover:border-[#12304A] rounded-[10px] p-8 text-center bg-[#FBFBFA]">
+              <input
+                type="file"
+                id="harassment-file"
+                onChange={handleFileUpload}
+                accept="image/*,application/pdf"
+                className="hidden"
+              />
+              <label htmlFor="harassment-file" className="cursor-pointer flex flex-col items-center">
+                <div className="w-12 h-12 rounded-full bg-[#EDF3F7] text-[#12304A] flex items-center justify-center mb-3">
+                  <UploadCloud className="w-6 h-6 stroke-[1.8]" />
+                </div>
+                <div className="text-sm font-bold text-[#12304A]">Click to select files</div>
+                <div className="text-xs text-[#5E6B73] mt-1">PNG, JPG, PDF up to 10 MB</div>
+              </label>
+
+              <div className="mt-4 pt-4 border-t border-[#E2E6E8] flex justify-center">
+                <button
+                  type="button"
+                  onClick={handleAddSampleChat}
+                  className="text-xs font-semibold px-3 py-1.5 rounded-md bg-[#EDF3F7] text-[#12304A] hover:bg-[#DDE7F0]"
+                >
+                  + Add Sample Chat Log (Auto-Test)
+                </button>
+              </div>
+            </div>
+
+            {uploading && (
+              <div className="mt-4 p-3 bg-[#EDF3F7] rounded text-xs text-[#12304A] flex items-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Processing uploaded file...</span>
+              </div>
+            )}
+
+            {evidenceList.length > 0 && (
+              <div className="mt-6 space-y-2">
+                {evidenceList.map((ev) => (
+                  <div key={ev.id} className="flex items-center justify-between p-3 bg-[#F8F9FA] rounded border border-[#DDE2E4] text-xs">
+                    <div className="flex items-center gap-2.5">
+                      <FileText className="w-4 h-4 text-[#12304A]" />
+                      <span className="font-bold text-[#1C252C]">{ev.fileName}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setEvidenceList(evidenceList.filter((e) => e.id !== ev.id))}
+                      className="text-[#5E6B73] hover:text-[#992E2E]"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="mt-8 pt-6 border-t border-[#DDE2E4] flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                className="px-4 py-2 rounded-md border border-[#DDE2E4] text-xs font-semibold text-[#5E6B73]"
+              >
+                Back
+              </button>
+
+              <button
+                type="button"
+                disabled={submitting}
+                onClick={handleSubmit}
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-bold hover:bg-[#0B2235]"
+              >
+                {submitting ? 'Registering Report...' : 'Submit Report'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 3 && createdComplaint && (
+          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-8 shadow-card text-center flex flex-col items-center">
+            <div className="w-14 h-14 rounded-full bg-[#E6F4EA] text-[#237A57] flex items-center justify-center mb-4">
+              <CheckCircle2 className="w-8 h-8" />
+            </div>
+            <div className="text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-badge mb-2">
+              COMPLAINT REGISTERED
+            </div>
+            <h1 className="text-2xl font-bold text-[#12304A]">{createdComplaint.complaintNumber}</h1>
+            <p className="mt-2 text-sm text-[#5E6B73] max-w-md">
+              Your report has been routed to <strong>{createdComplaint.assignedTeam.policeStation}</strong> for immediate review and platform preservation notices.
+            </p>
+
+            <div className="mt-6 flex gap-3">
+              <Link
+                to={`/track?number=${createdComplaint.complaintNumber}`}
+                className="px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-bold hover:bg-[#0B2235]"
+              >
+                Track Complaint Timeline
+              </Link>
+            </div>
+          </div>
+        )}
+      </Container>
+    </div>
+  );
+};
