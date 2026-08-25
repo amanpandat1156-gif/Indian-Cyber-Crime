@@ -2,18 +2,40 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, CheckCircle2, AlertTriangle, FileText, UploadCloud, X, Loader2 } from 'lucide-react';
 import { Container } from '../../components/common/Container';
+import { MultilingualVoiceTextarea } from '../../components/common/MultilingualVoiceTextarea';
+import { AutoFillDemoButton } from '../../components/common/AutoFillDemoButton';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
+import { useDemo } from '../../context/DemoContext';
+import { ParsedIncidentIntent } from '../../services/aiService';
 import { complaintService } from '../../services/complaintService';
 import { evidenceService } from '../../services/evidenceService';
 import { Evidence, Complaint } from '../../types';
 
 export const HarassmentReportPage: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
+  const { scenarios } = useDemo();
   const [step, setStep] = useState<1 | 2 | 3>(1);
+
+  const handleAutoFill = () => {
+    const sc = scenarios.harassment;
+    setPlatform(sc.platform);
+    setTitle(sc.title);
+    setDescription(sc.description);
+    setSuspectDetails(sc.suspectDetails);
+  };
+
+  const handleAiAutoDraft = (parsed: ParsedIncidentIntent) => {
+    if (parsed.suggestedTitle) setTitle(parsed.suggestedTitle);
+    if (parsed.suspectIdentifiers.socialHandle) setSuspectDetails(parsed.suspectIdentifiers.socialHandle);
+    else if (parsed.suspectIdentifiers.phone) setSuspectDetails(`+91-${parsed.suspectIdentifiers.phone}`);
+    if (parsed.suspectIdentifiers.website) setPlatform(parsed.suspectIdentifiers.website);
+  };
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [platform, setPlatform] = useState('Instagram / WhatsApp');
+  const [platform, setPlatform] = useState('');
   const [suspectDetails, setSuspectDetails] = useState('');
   const [evidenceList, setEvidenceList] = useState<Evidence[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -76,7 +98,7 @@ export const HarassmentReportPage: React.FC = () => {
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#5E6B73] hover:text-[#12304A]"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back to Home</span>
+            <span>{t('common.backToHome')}</span>
           </Link>
         </div>
 
@@ -92,74 +114,79 @@ export const HarassmentReportPage: React.FC = () => {
             <div className="mb-6 p-4 rounded-md bg-[#FFF9E6] border border-[#FFE082] text-xs text-[#7A5800] flex items-start gap-2.5">
               <AlertTriangle className="w-4 h-4 text-[#B7791F] shrink-0 mt-0.5" />
               <div>
-                <strong className="block font-bold">Immediate Safety Notice</strong>
-                If you are facing immediate physical harm or life-threatening extortion, please call emergency police at <strong>112</strong> immediately.
+                <strong className="block font-bold">{t('form.harassment.safetyNoticeTitle')}</strong>
+                {t('form.harassment.safetyNotice')}
               </div>
             </div>
 
-            <div className="mb-6">
-              <div className="text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
-                INTENT FIRST REPORTING
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+              <div>
+                <div className="text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
+                  {t('form.harassment.badge')}
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A] tracking-tight">
+                  {t('form.harassment.title')}
+                </h1>
+                <p className="mt-1.5 text-sm text-[#5E6B73]">
+                  {t('form.harassment.subtitle')}
+                </p>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A] tracking-tight">
-                Someone Is Harassing or Threatening Me
-              </h1>
-              <p className="mt-1.5 text-sm text-[#5E6B73]">
-                Tell us what happened in plain language. You can share screenshots of chat messages, extortion emails, or fake profiles.
-              </p>
+
+              <AutoFillDemoButton onAutoFill={handleAutoFill} />
             </div>
 
             <div className="space-y-4 text-xs">
               <div>
                 <label className="block text-xs font-bold text-[#1C252C] mb-1.5">
-                  Platform or App Involved
+                  {t('form.harassment.platformLabel')}
                 </label>
                 <input
                   type="text"
                   value={platform}
                   onChange={(e) => setPlatform(e.target.value)}
-                  placeholder="e.g. WhatsApp, Instagram, Telegram, SMS"
+                  placeholder={t('form.harassment.platformPlaceholder')}
                   className="w-full px-3 py-2 text-sm bg-[#FBFBFA] border border-[#DDE2E4] rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-[#1C252C] mb-1.5">
-                  Brief Summary / Title <span className="text-[#8B2626]">*</span>
+                  {t('form.harassment.titleLabel')} <span className="text-[#8B2626]">*</span>
                 </label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g. Blackmail messages received on WhatsApp from unknown caller"
+                  placeholder={t('form.harassment.titlePlaceholder')}
                   className="w-full px-3 py-2 text-sm bg-[#FBFBFA] border border-[#DDE2E4] rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none"
                   required
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-[#1C252C] mb-1.5">
-                  Tell us what happened <span className="text-[#8B2626]">*</span>
-                </label>
-                <textarea
-                  rows={4}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Describe the nature of the messages, what demands were made, and any dates/times."
-                  className="w-full px-3 py-2 text-sm bg-[#FBFBFA] border border-[#DDE2E4] rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none"
-                  required
-                />
-              </div>
+              <MultilingualVoiceTextarea
+                id="harassment-description"
+                label={
+                  <>
+                    {t('form.harassment.narrativeLabel')} <span className="text-[#8B2626]">*</span>
+                  </>
+                }
+                rows={4}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                onAutoDraft={handleAiAutoDraft}
+                placeholder={t('form.harassment.narrativePlaceholder')}
+                required
+              />
 
               <div>
                 <label className="block text-xs font-bold text-[#1C252C] mb-1.5">
-                  Suspect Contact Details / Social Handle (if known)
+                  {t('form.harassment.suspectLabel')}
                 </label>
                 <input
                   type="text"
                   value={suspectDetails}
                   onChange={(e) => setSuspectDetails(e.target.value)}
-                  placeholder="e.g. Phone number +91-9870001122 or username @fake_profile"
+                  placeholder={t('form.harassment.suspectPlaceholder')}
                   className="w-full px-3 py-2 text-sm bg-[#FBFBFA] border border-[#DDE2E4] rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none"
                 />
               </div>
@@ -178,7 +205,7 @@ export const HarassmentReportPage: React.FC = () => {
                 }}
                 className="inline-flex items-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-semibold hover:bg-[#0B2235] transition-colors"
               >
-                <span>Continue to Attach Proof</span>
+                <span>{t('form.harassment.continueProof')}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -189,10 +216,10 @@ export const HarassmentReportPage: React.FC = () => {
           <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-6 sm:p-8 shadow-card">
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-[#12304A] tracking-tight">
-                Attach Chat Screenshots & Evidence
+                {t('form.harassment.uploadProofTitle')}
               </h2>
               <p className="mt-1 text-sm text-[#5E6B73]">
-                Upload screenshots of threatening messages, call logs, or URLs.
+                {t('form.harassment.uploadProofSubtitle')}
               </p>
             </div>
 
@@ -256,7 +283,7 @@ export const HarassmentReportPage: React.FC = () => {
                 onClick={() => setStep(1)}
                 className="px-4 py-2 rounded-md border border-[#DDE2E4] text-xs font-semibold text-[#5E6B73]"
               >
-                Back
+                {t('common.back')}
               </button>
 
               <button
@@ -265,7 +292,7 @@ export const HarassmentReportPage: React.FC = () => {
                 onClick={handleSubmit}
                 className="inline-flex items-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-bold hover:bg-[#0B2235]"
               >
-                {submitting ? 'Registering Report...' : 'Submit Report'}
+                {submitting ? t('form.harassment.submitting') : t('form.harassment.submitBtn')}
               </button>
             </div>
           </div>
@@ -277,7 +304,7 @@ export const HarassmentReportPage: React.FC = () => {
               <CheckCircle2 className="w-8 h-8" />
             </div>
             <div className="text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-badge mb-2">
-              COMPLAINT REGISTERED
+              {t('form.harassment.successTitle')}
             </div>
             <h1 className="text-2xl font-bold text-[#12304A]">{createdComplaint.complaintNumber}</h1>
             <p className="mt-2 text-sm text-[#5E6B73] max-w-md">
@@ -289,7 +316,7 @@ export const HarassmentReportPage: React.FC = () => {
                 to={`/track?number=${createdComplaint.complaintNumber}`}
                 className="px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-bold hover:bg-[#0B2235]"
               >
-                Track Complaint Timeline
+                {t('form.harassment.trackTimeline')}
               </Link>
             </div>
           </div>

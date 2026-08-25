@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, Lock, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CheckCircle2, Lock, X } from 'lucide-react';
 import { Container } from '../../components/common/Container';
+import { MultilingualVoiceTextarea } from '../../components/common/MultilingualVoiceTextarea';
+import { AutoFillDemoButton } from '../../components/common/AutoFillDemoButton';
+import { useLanguage } from '../../context/LanguageContext';
+import { useDemo } from '../../context/DemoContext';
+import { ParsedIncidentIntent } from '../../services/aiService';
 import { complaintService } from '../../services/complaintService';
 import { evidenceService } from '../../services/evidenceService';
 import { Evidence, Complaint } from '../../types';
 
 export const AnonymousReportPage: React.FC = () => {
+  const { t } = useLanguage();
+  const { scenarios } = useDemo();
   const [step, setStep] = useState<1 | 2>(1);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -15,6 +22,17 @@ export const AnonymousReportPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [createdComplaint, setCreatedComplaint] = useState<Complaint | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const handleAiAutoDraft = (parsed: ParsedIncidentIntent) => {
+    if (parsed.suggestedTitle) setTitle(parsed.suggestedTitle);
+  };
+
+  const handleAutoFill = () => {
+    const sc = scenarios.anonymous;
+    setCategory(sc.category);
+    setTitle(sc.title);
+    setDescription(sc.description);
+  };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -58,7 +76,7 @@ export const AnonymousReportPage: React.FC = () => {
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#5E6B73] hover:text-[#12304A]"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back to Home</span>
+            <span>{t('common.backToHome')}</span>
           </Link>
         </div>
 
@@ -81,22 +99,26 @@ export const AnonymousReportPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="mb-6">
-              <div className="text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
-                CONFIDENTIAL INTEL INTAKE
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+              <div>
+                <div className="text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
+                  {t('form.anonymous.badge')}
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A] tracking-tight">
+                  {t('form.anonymous.title')}
+                </h1>
+                <p className="mt-1.5 text-sm text-[#5E6B73]">
+                  {t('form.anonymous.subtitle')}
+                </p>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A] tracking-tight">
-                Report Anonymously
-              </h1>
-              <p className="mt-1.5 text-sm text-[#5E6B73]">
-                Share suspicious cyber activity or national threat intelligence without revealing your personal identity.
-              </p>
+
+              <AutoFillDemoButton onAutoFill={handleAutoFill} />
             </div>
 
             <div className="space-y-4 text-xs">
               <div>
                 <label className="block text-xs font-bold text-[#1C252C] mb-1.5">
-                  Crime Category
+                  {t('form.anonymous.categoryLabel')}
                 </label>
                 <select
                   value={category}
@@ -113,7 +135,7 @@ export const AnonymousReportPage: React.FC = () => {
 
               <div>
                 <label className="block text-xs font-bold text-[#1C252C] mb-1.5">
-                  Subject / Summary <span className="text-[#8B2626]">*</span>
+                  {t('form.anonymous.titleLabel')} <span className="text-[#8B2626]">*</span>
                 </label>
                 <input
                   type="text"
@@ -125,19 +147,20 @@ export const AnonymousReportPage: React.FC = () => {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-[#1C252C] mb-1.5">
-                  Detailed Information & Evidence Links <span className="text-[#8B2626]">*</span>
-                </label>
-                <textarea
-                  rows={4}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Provide URLs, server IPs, group links, and timestamps."
-                  className="w-full px-3 py-2 text-sm bg-[#FBFBFA] border border-[#DDE2E4] rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none"
-                  required
-                />
-              </div>
+              <MultilingualVoiceTextarea
+                id="anonymous-details"
+                label={
+                  <>
+                    {t('form.anonymous.detailsLabel')} <span className="text-[#8B2626]">*</span>
+                  </>
+                }
+                rows={4}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                onAutoDraft={handleAiAutoDraft}
+                placeholder="Provide URLs, server IPs, group links, and timestamps."
+                required
+              />
 
               {/* Attach optional evidence */}
               <div>
@@ -178,7 +201,8 @@ export const AnonymousReportPage: React.FC = () => {
                 onClick={handleSubmit}
                 className="inline-flex items-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-bold hover:bg-[#0B2235]"
               >
-                {submitting ? 'Transmitting Tip...' : 'Submit Anonymous Tip'}
+                <span>{submitting ? 'Registering Report...' : t('form.anonymous.submitBtn')}</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>

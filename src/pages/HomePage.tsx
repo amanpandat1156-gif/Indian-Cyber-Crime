@@ -6,8 +6,12 @@ import { TrackComplaintBanner } from '../components/home/TrackComplaintBanner';
 import { EmergencySection } from '../components/home/EmergencySection';
 import { LowerCardsSection } from '../components/home/LowerCardsSection';
 import { QuickLinksSection } from '../components/home/QuickLinksSection';
+import { InteractiveGridBackground } from '../components/common/InteractiveGridBackground';
+import { useLanguage } from '../context/LanguageContext';
 
 export const HomePage: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <div className="w-full bg-[#F8F7F3] min-h-screen">
       <Container size="full" className="max-w-[1400px] py-8 sm:py-10 px-3 sm:px-6 lg:px-8">
@@ -15,17 +19,21 @@ export const HomePage: React.FC = () => {
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-7 items-stretch">
           {/* Left Column (Hero + 6 Intent Cards + Track Banner) */}
           <div className="flex-1 flex flex-col justify-between min-w-0">
-            {/* Hero Header */}
-            <div className="mb-6">
-              <div className="text-[11px] sm:text-[12px] font-bold tracking-widest text-[#1D60A1] uppercase mb-2">
-                SAFE CITIZENS. A SAFER DIGITAL INDIA.
+            {/* Hero Header Card with Interactive Grid */}
+            <div className="relative rounded-[12px] p-6 sm:p-7 mb-6 border border-[#E2E6E8] bg-white shadow-2xs overflow-hidden group">
+              <InteractiveGridBackground theme="light" gridSpacing={24} interactionRadius={140} />
+              
+              <div className="relative z-10">
+                <div className="text-[11px] sm:text-[12px] font-bold tracking-widest text-[#1D60A1] uppercase mb-2">
+                  {t('home.heroBadge')}
+                </div>
+                <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-bold text-[#12304A] tracking-tight leading-tight">
+                  {t('home.howCanWeHelp')}
+                </h1>
+                <p className="mt-2.5 text-sm sm:text-[15px] text-[#5E6B73] leading-relaxed max-w-2xl">
+                  {t('home.heroSubtitle')}
+                </p>
               </div>
-              <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-bold text-[#12304A] tracking-tight leading-tight">
-                How can we help?
-              </h1>
-              <p className="mt-2.5 text-sm sm:text-[15px] text-[#5E6B73] leading-relaxed max-w-2xl">
-                Tell us what happened. We'll guide you through the next steps and help you get the right support.
-              </p>
             </div>
 
             {/* 6 Intent Cards: 3 columns x 2 rows */}

@@ -158,9 +158,39 @@ export const TrackPage: React.FC = () => {
             </button>
           </form>
 
-          {/* User's complaints quick picker */}
+          {/* Sample Hackathon Case Pickers */}
+          <div className="mt-4 p-3 bg-white rounded-[8px] border border-[#DDE2E4] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-bold text-[#12304A] flex items-center gap-1">
+                <span>✨ Sample Test Cases:</span>
+              </span>
+              {[
+                { number: 'NCRP-2026-849201', label: 'Financial Fraud (Action Required)' },
+                { number: 'NCRP-2026-410293', label: 'Harassment (Resolved)' },
+                { number: 'NCRP-2026-103948', label: 'Anonymous Token' },
+              ].map((sample) => (
+                <button
+                  key={sample.number}
+                  type="button"
+                  onClick={() => {
+                    setSearchInput(sample.number);
+                    handleSearch(sample.number);
+                  }}
+                  className={`px-2.5 py-1 rounded-[6px] border font-mono transition-all text-xs font-semibold ${
+                    currentComplaint?.complaintNumber === sample.number
+                      ? 'bg-[#12304A] text-white border-[#12304A] shadow-xs'
+                      : 'bg-[#FBFBFA] text-[#12304A] border-[#CCD3D6] hover:bg-[#EDF3F7]'
+                  }`}
+                >
+                  {sample.number}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* User's complaints quick picker (if logged in) */}
           {user && userComplaints.length > 0 && (
-            <div className="mt-3 flex items-center gap-2 flex-wrap text-xs">
+            <div className="mt-2.5 flex items-center gap-2 flex-wrap text-xs">
               <span className="text-[#5E6B73] font-medium">Your filed cases:</span>
               {userComplaints.map((c) => (
                 <button

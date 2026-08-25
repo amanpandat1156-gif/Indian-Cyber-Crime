@@ -28,11 +28,11 @@ export const AccessibilityProvider: React.FC<{ children: React.ReactNode }> = ({
       root.classList.add('font-scale-larger');
     }
 
-    // Handle high contrast
+    // Handle high contrast / dark mode
     if (contrastMode === 'high-contrast') {
-      root.classList.add('high-contrast-mode');
+      root.classList.add('high-contrast-mode', 'dark');
     } else {
-      root.classList.remove('high-contrast-mode');
+      root.classList.remove('high-contrast-mode', 'dark');
     }
   }, [fontSize, contrastMode]);
 

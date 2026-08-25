@@ -109,7 +109,7 @@ class ComplaintService {
       }
 
       return newComplaint;
-    }, 600, 900);
+    }, 900, 1200);
   }
 
   async getComplaintByNumber(complaintNumber: string): Promise<ApiResponse<Complaint>> {

@@ -14,15 +14,31 @@ import {
   Mail
 } from 'lucide-react';
 import { Container } from '../components/common/Container';
+import { AutoFillDemoButton } from '../components/common/AutoFillDemoButton';
+import { useDemo } from '../context/DemoContext';
 import { verificationService } from '../services/verificationService';
 import { VerificationResult, IdentifierType } from '../types';
 
 export const VerifyPage: React.FC = () => {
+  const { scenarios } = useDemo();
   const [searchQuery, setSearchQuery] = useState('');
   const [identifierType, setIdentifierType] = useState<IdentifierType>('MOBILE');
   const [result, setResult] = useState<VerificationResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const handleAutoFill = () => {
+    const mobile = scenarios.suspectCheck.mobile;
+    setSearchQuery(mobile);
+    setIdentifierType('MOBILE');
+    setLoading(true);
+    verificationService.verifyIdentifier(mobile, 'MOBILE').then((res) => {
+      setLoading(false);
+      if (res.success && res.data) {
+        setResult(res.data);
+      }
+    });
+  };
 
   // Report Identifier Modal State
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -86,16 +102,20 @@ export const VerifyPage: React.FC = () => {
     <div className="w-full bg-[#F8F7F3] min-h-screen py-8 sm:py-12">
       <Container size="md">
         {/* Header */}
-        <div className="mb-8">
-          <div className="text-[11px] sm:text-[12px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1.5">
-            CITIZEN INTELLIGENCE REPOSITORY
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+          <div>
+            <div className="text-[11px] sm:text-[12px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1.5">
+              CITIZEN INTELLIGENCE REPOSITORY
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-[#12304A] tracking-tight">
+              Check & Verify Suspicious Numbers or UPI IDs
+            </h1>
+            <p className="mt-2 text-sm text-[#5E6B73] leading-relaxed">
+              Verify unknown mobile numbers, UPI VPAs, bank accounts, or websites against cross-state cybercrime reports before making payments or sharing information.
+            </p>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#12304A] tracking-tight">
-            Check & Verify Suspicious Numbers or UPI IDs
-          </h1>
-          <p className="mt-2 text-sm text-[#5E6B73] leading-relaxed">
-            Verify unknown mobile numbers, UPI VPAs, bank accounts, or websites against cross-state cybercrime reports before making payments or sharing information.
-          </p>
+
+          <AutoFillDemoButton onAutoFill={handleAutoFill} label="Verify Flagged Scam Number" />
         </div>
 
         {/* Search Box */}
