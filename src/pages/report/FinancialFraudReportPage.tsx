@@ -17,8 +17,10 @@ import {
 } from 'lucide-react';
 import { Container } from '../../components/common/Container';
 import { MultilingualVoiceTextarea } from '../../components/common/MultilingualVoiceTextarea';
+import { AutoFillDemoButton } from '../../components/common/AutoFillDemoButton';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { useDemo } from '../../context/DemoContext';
 import { evidenceService } from '../../services/evidenceService';
 import { complaintService } from '../../services/complaintService';
 import { Evidence, ExtractedFinancialData, Complaint } from '../../types';
@@ -26,16 +28,17 @@ import { Evidence, ExtractedFinancialData, Complaint } from '../../types';
 export const FinancialFraudReportPage: React.FC = () => {
   const { user, openLoginModal } = useAuth();
   const { t } = useLanguage();
+  const { scenarios } = useDemo();
 
   // Wizard Steps: 1 = Incident Details, 2 = Evidence Upload & OCR, 3 = Extracted Data Review, 4 = Final Review, 5 = Submitted
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4 | 5>(1);
 
   // Form State
-  const [incidentDate, setIncidentDate] = useState(new Date().toISOString().split('T')[0]);
-  const [amount, setAmount] = useState<string>('48500');
+  const [incidentDate, setIncidentDate] = useState('');
+  const [amount, setAmount] = useState<string>('');
   const [paymentMode, setPaymentMode] = useState<'UPI' | 'NET_BANKING' | 'CREDIT_CARD' | 'DEBIT_CARD' | 'WALLET'>('UPI');
-  const [title, setTitle] = useState('Unauthorized UPI Transfer via Fake Electricity Bill QR');
-  const [description, setDescription] = useState('Received an SMS claiming electricity disconnection. Clicked link and scanned QR code which deducted funds from my bank account.');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
 
   // Evidence & OCR State
   const [evidenceList, setEvidenceList] = useState<Evidence[]>([]);
@@ -48,6 +51,23 @@ export const FinancialFraudReportPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createdComplaint, setCreatedComplaint] = useState<Complaint | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+
+  const handleAutoFill = () => {
+    const sc = scenarios.financialFraud;
+    setAmount(sc.amount);
+    setIncidentDate(sc.incidentDate);
+    setPaymentMode(sc.paymentMode);
+    setTitle(sc.title);
+    setDescription(sc.description);
+    setExtractedData({
+      amount: Number(sc.amount),
+      date: sc.incidentDate,
+      transactionId: sc.transactionId,
+      bankName: sc.bankName,
+      upiId: sc.suspectVpa,
+      paymentMode: sc.paymentMode,
+    });
+  };
 
   // Handle Mock/Real File Upload
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -187,16 +207,20 @@ export const FinancialFraudReportPage: React.FC = () => {
         {/* STEP 1: INCIDENT OVERVIEW & DETAILS */}
         {currentStep === 1 && (
           <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-6 sm:p-8 shadow-card">
-            <div className="mb-6">
-              <div className="text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
-                {t('form.financial.badge')}
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+              <div>
+                <div className="text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
+                  {t('form.financial.badge')}
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A] tracking-tight">
+                  {t('form.financial.title')}
+                </h1>
+                <p className="mt-1.5 text-sm text-[#5E6B73]">
+                  {t('form.financial.subtitle')}
+                </p>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A] tracking-tight">
-                {t('form.financial.title')}
-              </h1>
-              <p className="mt-1.5 text-sm text-[#5E6B73]">
-                {t('form.financial.subtitle')}
-              </p>
+
+              <AutoFillDemoButton onAutoFill={handleAutoFill} />
             </div>
 
             <div className="space-y-5">
@@ -296,8 +320,8 @@ export const FinancialFraudReportPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
-                  if (!title.trim() || !description.trim()) {
-                    setFormError('Please complete all required fields.');
+                  if (!amount || !title.trim() || !description.trim()) {
+                    setFormError('Please complete all required fields (Amount, Title, and Description).');
                     return;
                   }
                   setFormError(null);

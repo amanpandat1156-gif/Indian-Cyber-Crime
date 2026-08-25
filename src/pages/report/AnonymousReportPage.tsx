@@ -3,13 +3,16 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, CheckCircle2, Lock, X } from 'lucide-react';
 import { Container } from '../../components/common/Container';
 import { MultilingualVoiceTextarea } from '../../components/common/MultilingualVoiceTextarea';
+import { AutoFillDemoButton } from '../../components/common/AutoFillDemoButton';
 import { useLanguage } from '../../context/LanguageContext';
+import { useDemo } from '../../context/DemoContext';
 import { complaintService } from '../../services/complaintService';
 import { evidenceService } from '../../services/evidenceService';
 import { Evidence, Complaint } from '../../types';
 
 export const AnonymousReportPage: React.FC = () => {
   const { t } = useLanguage();
+  const { scenarios } = useDemo();
   const [step, setStep] = useState<1 | 2>(1);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -18,6 +21,13 @@ export const AnonymousReportPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [createdComplaint, setCreatedComplaint] = useState<Complaint | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const handleAutoFill = () => {
+    const sc = scenarios.anonymous;
+    setCategory(sc.category);
+    setTitle(sc.title);
+    setDescription(sc.description);
+  };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -84,16 +94,20 @@ export const AnonymousReportPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="mb-6">
-              <div className="text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
-                {t('form.anonymous.badge')}
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+              <div>
+                <div className="text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
+                  {t('form.anonymous.badge')}
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A] tracking-tight">
+                  {t('form.anonymous.title')}
+                </h1>
+                <p className="mt-1.5 text-sm text-[#5E6B73]">
+                  {t('form.anonymous.subtitle')}
+                </p>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A] tracking-tight">
-                {t('form.anonymous.title')}
-              </h1>
-              <p className="mt-1.5 text-sm text-[#5E6B73]">
-                {t('form.anonymous.subtitle')}
-              </p>
+
+              <AutoFillDemoButton onAutoFill={handleAutoFill} />
             </div>
 
             <div className="space-y-4 text-xs">

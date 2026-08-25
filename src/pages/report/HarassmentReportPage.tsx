@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, CheckCircle2, AlertTriangle, FileText, UploadCloud, X, Loader2 } from 'lucide-react';
 import { Container } from '../../components/common/Container';
 import { MultilingualVoiceTextarea } from '../../components/common/MultilingualVoiceTextarea';
+import { AutoFillDemoButton } from '../../components/common/AutoFillDemoButton';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { useDemo } from '../../context/DemoContext';
 import { complaintService } from '../../services/complaintService';
 import { evidenceService } from '../../services/evidenceService';
 import { Evidence, Complaint } from '../../types';
@@ -12,11 +14,20 @@ import { Evidence, Complaint } from '../../types';
 export const HarassmentReportPage: React.FC = () => {
   const { user } = useAuth();
   const { t } = useLanguage();
+  const { scenarios } = useDemo();
   const [step, setStep] = useState<1 | 2 | 3>(1);
+
+  const handleAutoFill = () => {
+    const sc = scenarios.harassment;
+    setPlatform(sc.platform);
+    setTitle(sc.title);
+    setDescription(sc.description);
+    setSuspectDetails(sc.suspectDetails);
+  };
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [platform, setPlatform] = useState('Instagram / WhatsApp');
+  const [platform, setPlatform] = useState('');
   const [suspectDetails, setSuspectDetails] = useState('');
   const [evidenceList, setEvidenceList] = useState<Evidence[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -100,16 +111,20 @@ export const HarassmentReportPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="mb-6">
-              <div className="text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
-                {t('form.harassment.badge')}
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+              <div>
+                <div className="text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
+                  {t('form.harassment.badge')}
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A] tracking-tight">
+                  {t('form.harassment.title')}
+                </h1>
+                <p className="mt-1.5 text-sm text-[#5E6B73]">
+                  {t('form.harassment.subtitle')}
+                </p>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A] tracking-tight">
-                {t('form.harassment.title')}
-              </h1>
-              <p className="mt-1.5 text-sm text-[#5E6B73]">
-                {t('form.harassment.subtitle')}
-              </p>
+
+              <AutoFillDemoButton onAutoFill={handleAutoFill} />
             </div>
 
             <div className="space-y-4 text-xs">

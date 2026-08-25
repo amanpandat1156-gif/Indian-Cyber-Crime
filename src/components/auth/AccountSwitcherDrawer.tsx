@@ -1,20 +1,19 @@
 import React, { useState } from 'react';
-import { Users, Check, X, ChevronUp, ChevronDown, RotateCcw } from 'lucide-react';
+import { Users, Check, X, ChevronUp, ChevronDown, RotateCcw, Sparkles, ArrowRight } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { mockDb } from '../../services/mockDb';
+import { useDemo, DEMO_PERSONAS } from '../../context/DemoContext';
 
 export const AccountSwitcherDrawer: React.FC = () => {
-  const { user, switchAccount, testAccounts, refreshUser, logout } = useAuth();
+  const { user, logout } = useAuth();
+  const { switchToPersona, resetDatabase } = useDemo();
   const [isOpen, setIsOpen] = useState(false);
   const [resetting, setResetting] = useState(false);
 
   const handleReset = async () => {
-    if (confirm('Reset mock database to initial seed data?')) {
+    if (confirm('Reset mock database to initial hackathon test cases & clean state?')) {
       setResetting(true);
-      mockDb.resetDatabase();
-      await refreshUser();
+      await resetDatabase();
       setResetting(false);
-      window.location.reload();
     }
   };
 
@@ -24,66 +23,115 @@ export const AccountSwitcherDrawer: React.FC = () => {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#0B2235] text-white text-xs font-semibold shadow-2xl border border-slate-700 hover:bg-[#12304A] transition-all"
-        title="Switch Demo Test Account"
+        className="flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-[#0B2235] text-white text-xs font-semibold shadow-2xl border border-slate-700 hover:bg-[#12304A] transition-all group"
+        title="Hackathon Quick-Switch: Change Demo Persona"
       >
+        <span className="flex h-2 w-2 relative">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FFAE42] opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FFAE42]"></span>
+        </span>
         <Users className="w-3.5 h-3.5 text-[#FFAE42]" />
-        <span className="hidden sm:inline">Demo User:</span>
-        <span className="font-bold text-[#FFAE42] max-w-[120px] truncate">
+        <span className="hidden sm:inline text-slate-300 font-normal">Demo Persona:</span>
+        <span className="font-bold text-[#FFAE42] max-w-[130px] truncate">
           {user ? user.name.split(' ')[0] : 'Logged Out'}
         </span>
-        {isOpen ? <ChevronDown className="w-3 h-3" /> : <ChevronUp className="w-3 h-3" />}
+        {isOpen ? <ChevronDown className="w-3.5 h-3.5 text-slate-400" /> : <ChevronUp className="w-3.5 h-3.5 text-slate-400" />}
       </button>
 
-      {/* Expanded Account Selection Menu */}
+      {/* Expanded Quick-Switch Drawer Menu */}
       {isOpen && (
-        <div className="absolute bottom-12 right-0 w-72 sm:w-80 bg-white rounded-[10px] border border-[#DDE2E4] shadow-2xl p-4 text-xs animate-in slide-in-from-bottom-2 duration-150">
-          <div className="flex items-center justify-between pb-2 mb-3 border-b border-[#F0F2F3]">
-            <div className="font-bold text-[#12304A] uppercase tracking-wider text-[11px]">
-              Active Test Account (Stage 2)
+        <div className="absolute bottom-14 right-0 w-80 sm:w-96 bg-white rounded-[12px] border border-[#DDE2E4] shadow-2xl p-4 text-xs animate-in slide-in-from-bottom-2 duration-150">
+          <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#F0F2F3]">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-[#EA580C]" />
+              <div>
+                <div className="font-bold text-[#12304A] text-xs">
+                  Hackathon Judge Personas
+                </div>
+                <div className="text-[10px] text-[#5E6B73]">
+                  Instant 1-Click Evaluation Accounts
+                </div>
+              </div>
             </div>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="p-1 text-[#5E6B73] hover:text-[#12304A]"
+              className="p-1 text-[#5E6B73] hover:text-[#12304A] rounded-md hover:bg-slate-100"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
-          <div className="space-y-1.5 mb-3">
-            {testAccounts.map((acc) => {
-              const isCurrent = user?.id === acc.id;
+          <div className="space-y-2 mb-3">
+            {DEMO_PERSONAS.map((persona) => {
+              const isCurrent = user?.id === persona.id;
               return (
-                <button
-                  key={acc.id}
-                  type="button"
-                  onClick={() => {
-                    switchAccount(acc.id);
-                    setIsOpen(false);
-                  }}
-                  className={`w-full flex items-center justify-between p-2.5 rounded-md text-left transition-colors ${
+                <div
+                  key={persona.id}
+                  className={`p-3 rounded-[8px] border transition-all ${
                     isCurrent
-                      ? 'bg-[#EDF3F7] text-[#12304A] font-bold border border-[#12304A]/30'
-                      : 'hover:bg-[#F8F9FA] text-[#1C252C] border border-transparent'
+                      ? 'bg-[#EDF3F7] border-[#12304A] shadow-xs'
+                      : 'bg-[#FBFBFA] border-[#E5E9EB] hover:bg-white hover:border-[#CCD3D6]'
                   }`}
                 >
-                  <div>
-                    <div className="font-semibold">{acc.name}</div>
-                    <div className="text-[10.5px] text-[#5E6B73]">
-                      {acc.accountType === 'new' && 'Account A: New Citizen (0 Complaints)'}
-                      {acc.accountType === 'active_complaint' && 'Account B: Active Case (Action Required)'}
-                      {acc.accountType === 'resolved' && 'Account C: Resolved Complaint'}
-                      {acc.accountType === 'multiple' && 'Account D: Multiple Complaints (3 Cases)'}
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-bold text-sm text-[#12304A]">{persona.name}</span>
+                        <span
+                          className={`text-[9.5px] font-bold px-2 py-0.5 rounded-full ${
+                            persona.id === 'usr_priya_01'
+                              ? 'bg-amber-100 text-amber-800'
+                              : persona.id === 'usr_rahul_02'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : 'bg-blue-100 text-blue-800'
+                          }`}
+                        >
+                          {persona.badge}
+                        </span>
+                      </div>
+                      <div className="text-[11px] font-medium text-[#2C3840] mb-1">
+                        {persona.role}
+                      </div>
+                      <div className="text-[10px] text-[#5E6B73] leading-relaxed">
+                        {persona.subtitle}
+                      </div>
                     </div>
+                    {isCurrent && <Check className="w-4 h-4 text-[#12304A] shrink-0 mt-1" />}
                   </div>
-                  {isCurrent && <Check className="w-4 h-4 text-[#12304A]" />}
-                </button>
+
+                  <div className="mt-2.5 pt-2 border-t border-[#E5E9EB] flex items-center justify-between gap-2">
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        await switchToPersona(persona.id, false);
+                        setIsOpen(false);
+                      }}
+                      className="px-2.5 py-1 rounded bg-white border border-[#CCD3D6] text-[11px] font-semibold text-[#12304A] hover:bg-[#EDF3F7] transition-colors"
+                    >
+                      {isCurrent ? 'Active Account' : 'Switch Account'}
+                    </button>
+
+                    {persona.complaintNumber && (
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          await switchToPersona(persona.id, true);
+                          setIsOpen(false);
+                        }}
+                        className="inline-flex items-center gap-1 text-[11px] font-bold text-[#1D60A1] hover:underline"
+                      >
+                        <span>View Tracking</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </button>
+                    )}
+                  </div>
+                </div>
               );
             })}
           </div>
 
-          <div className="pt-2 border-t border-[#F0F2F3] flex items-center justify-between">
+          <div className="pt-2.5 border-t border-[#F0F2F3] flex items-center justify-between">
             {user ? (
               <button
                 type="button"
@@ -96,18 +144,18 @@ export const AccountSwitcherDrawer: React.FC = () => {
                 Log Out
               </button>
             ) : (
-              <span className="text-[11px] text-[#5E6B73]">Select account to log in</span>
+              <span className="text-[11px] text-[#5E6B73]">Select persona above to log in</span>
             )}
 
             <button
               type="button"
               onClick={handleReset}
               disabled={resetting}
-              className="inline-flex items-center gap-1 text-[11px] text-[#5E6B73] hover:text-[#12304A]"
-              title="Reset mock database to initial state"
+              className="inline-flex items-center gap-1.5 px-2 py-1 rounded text-[11px] font-semibold text-[#5E6B73] hover:text-[#12304A] hover:bg-slate-100 transition-colors"
+              title="Reset mock database to initial hackathon state"
             >
-              <RotateCcw className="w-3 h-3" />
-              <span>Reset Mock DB</span>
+              <RotateCcw className={`w-3 h-3 ${resetting ? 'animate-spin' : ''}`} />
+              <span>{resetting ? 'Resetting...' : 'Reset Mock DB'}</span>
             </button>
           </div>
         </div>

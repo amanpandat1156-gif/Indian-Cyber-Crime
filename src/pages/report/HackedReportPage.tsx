@@ -2,14 +2,17 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldAlert, ArrowLeft, ArrowRight, CheckCircle2, Check } from 'lucide-react';
 import { Container } from '../../components/common/Container';
+import { AutoFillDemoButton } from '../../components/common/AutoFillDemoButton';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { useDemo } from '../../context/DemoContext';
 import { complaintService } from '../../services/complaintService';
 import { Complaint } from '../../types';
 
 export const HackedReportPage: React.FC = () => {
   const { user } = useAuth();
   const { t } = useLanguage();
+  const { scenarios } = useDemo();
   const [step, setStep] = useState<1 | 2 | 3>(1);
 
   // Security checklist
@@ -20,12 +23,26 @@ export const HackedReportPage: React.FC = () => {
     informedContacts: false,
   });
 
-  const [accountType, setAccountType] = useState('Social Media (Instagram / WhatsApp / Facebook)');
+  const [accountType, setAccountType] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [compromiseDetails, setCompromiseDetails] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [createdComplaint, setCreatedComplaint] = useState<Complaint | null>(null);
+
+  const handleAutoFill = () => {
+    const sc = scenarios.hacked;
+    setChecklist({
+      revokedSessions: true,
+      changedPassword: true,
+      enabled2FA: true,
+      informedContacts: true,
+    });
+    setAccountType(sc.accountType);
+    setTitle(sc.title);
+    setDescription(sc.description);
+    setCompromiseDetails(sc.compromiseDetails);
+  };
 
   const toggleCheck = (key: keyof typeof checklist) => {
     setChecklist((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -67,17 +84,21 @@ export const HackedReportPage: React.FC = () => {
         {/* STEP 1: CRITICAL IMMEDIATE SECURITY TRIAGE */}
         {step === 1 && (
           <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-6 sm:p-8 shadow-card">
-            <div className="mb-6">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-badge bg-rose-50 border border-rose-200 text-[11px] font-bold text-[#8B2626] uppercase mb-2">
-                <ShieldAlert className="w-3.5 h-3.5" />
-                {t('form.hacked.triageBadge')}
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-badge bg-rose-50 border border-rose-200 text-[11px] font-bold text-[#8B2626] uppercase mb-2">
+                  <ShieldAlert className="w-3.5 h-3.5" />
+                  {t('form.hacked.triageBadge')}
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A] tracking-tight">
+                  {t('form.hacked.title')}
+                </h1>
+                <p className="mt-1.5 text-sm text-[#5E6B73]">
+                  {t('form.hacked.subtitle')}
+                </p>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A] tracking-tight">
-                {t('form.hacked.title')}
-              </h1>
-              <p className="mt-1.5 text-sm text-[#5E6B73]">
-                {t('form.hacked.subtitle')}
-              </p>
+
+              <AutoFillDemoButton onAutoFill={handleAutoFill} />
             </div>
 
             {/* Checklist items */}
@@ -180,6 +201,7 @@ export const HackedReportPage: React.FC = () => {
                   type="text"
                   value={accountType}
                   onChange={(e) => setAccountType(e.target.value)}
+                  placeholder="e.g. Social Media (Instagram / WhatsApp / Facebook)"
                   className="w-full px-3 py-2 text-sm bg-[#FBFBFA] border border-[#DDE2E4] rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none"
                 />
               </div>

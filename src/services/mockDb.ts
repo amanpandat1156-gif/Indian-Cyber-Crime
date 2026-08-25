@@ -51,28 +51,28 @@ export const getStatusMeta = (status: ComplaintStatus) => {
 
 export const MOCK_USERS: User[] = [
   {
-    id: 'usr_new_01',
-    name: 'Rahul Sharma',
-    email: 'rahul.sharma@example.in',
+    id: 'usr_priya_01',
+    name: 'Priya Sharma',
+    email: 'priya.sharma@example.in',
     phone: '9876543210',
-    accountType: 'new',
+    accountType: 'active_complaint',
     createdAt: '2026-08-01T10:00:00Z',
   },
   {
-    id: 'usr_active_02',
-    name: 'Priya Verma',
-    email: 'priya.verma@example.in',
-    phone: '9812345678',
-    accountType: 'active_complaint',
+    id: 'usr_rahul_02',
+    name: 'Rahul Verma',
+    email: 'rahul.verma@example.in',
+    phone: '9811122334',
+    accountType: 'resolved',
     createdAt: '2026-07-15T14:30:00Z',
   },
   {
-    id: 'usr_resolved_03',
-    name: 'Vikram Singh',
-    email: 'vikram.singh@example.in',
-    phone: '9898989898',
-    accountType: 'resolved',
-    createdAt: '2026-06-10T09:15:00Z',
+    id: 'usr_new_03',
+    name: 'New Citizen',
+    email: 'new.citizen@example.in',
+    phone: '9900011222',
+    accountType: 'new',
+    createdAt: '2026-08-25T08:00:00Z',
   },
   {
     id: 'usr_multi_04',
@@ -85,26 +85,26 @@ export const MOCK_USERS: User[] = [
 ];
 
 export const INITIAL_COMPLAINTS: Complaint[] = [
-  // Complaint for User B (Active Financial Fraud with Action Required)
+  // PERSONA 1: PRIYA SHARMA - Active Financial Fraud with Action Required (NCRP-2026-849201)
   {
-    id: 'cmp_482731',
-    complaintNumber: 'NCRP-2026-482731',
-    userId: 'usr_active_02',
+    id: 'cmp_849201',
+    complaintNumber: 'NCRP-2026-849201',
+    userId: 'usr_priya_01',
     type: 'FINANCIAL_FRAUD',
     title: 'Unauthorized UPI Transfer via Fake Electricity Bill QR',
-    description: 'Received an SMS claiming electricity power disconnection. Clicked link and scanned a QR code which deducted ₹48,500 from my savings account to a third-party UPI VPA.',
+    description: 'Received an urgent SMS claiming power disconnection at 9:30 PM. Scanned a QR code sent via WhatsApp which debited ₹48,500 from my SBI savings account to beneficiary VPA powerbill.desk@okaxis.',
     status: 'ACTION_REQUIRED',
-    statusDisplay: getStatusMeta('ACTION_REQUIRED').display,
-    statusDescription: getStatusMeta('ACTION_REQUIRED').description,
+    statusDisplay: 'Action Required: Bank Chargeback Form Requested',
+    statusDescription: 'Investigating officer at IFSO Delhi requested stamped bank statement & chargeback form to initiate inter-bank lien placement.',
     createdAt: '2026-08-23T11:20:00Z',
     updatedAt: '2026-08-24T09:30:00Z',
     assignedTeam: {
-      name: 'Cyber Crime Unit, Zone 2',
-      policeStation: 'Cyber Police Station, Central District',
-      district: 'Central Delhi',
+      name: 'Special Cell Cyber Crime Unit (IFSO)',
+      policeStation: 'Special Cell Cyber Crime Unit (IFSO)',
+      district: 'South West Delhi',
       state: 'Delhi',
-      officerName: 'Inspector Rajesh Malik',
-      contactNumber: '011-23456789',
+      officerName: 'DCP Hemant Tiwari',
+      contactNumber: '011-28031130',
     },
     financialDetails: {
       amount: 48500,
@@ -117,8 +117,8 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     },
     actionRequired: {
       id: 'act_stmt_01',
-      title: 'Upload Bank Account Statement for August 2026',
-      description: 'Please upload the stamped or PDF bank statement showing the unauthorized debit and closing balance to enable inter-bank lien placement.',
+      title: 'Upload Bank Chargeback Form / August 2026 Statement',
+      description: 'Please upload the bank chargeback dispute form or stamped PDF bank statement showing the unauthorized debit to enable inter-bank lien placement.',
       actionType: 'UPLOAD_STATEMENT',
       deadline: '2026-08-28',
       completed: false,
@@ -126,7 +126,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     evidence: [
       {
         id: 'ev_01',
-        complaintId: 'cmp_482731',
+        complaintId: 'cmp_849201',
         fileName: 'sms_disconnection_threat.jpg',
         fileType: 'image/jpeg',
         fileSize: '1.2 MB',
@@ -135,7 +135,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
       },
       {
         id: 'ev_02',
-        complaintId: 'cmp_482731',
+        complaintId: 'cmp_849201',
         fileName: 'upi_debit_screenshot.png',
         fileType: 'image/png',
         fileSize: '2.4 MB',
@@ -163,7 +163,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
       {
         id: 'tl_02',
         date: '23 Aug 2026, 11:35 AM',
-        title: '1930 Automated Intermediary Alert',
+        title: '1930 Automated Intermediary Alert Dispatched',
         description: 'Freeze alert dispatched to beneficiary bank (Axis Bank) and intermediary UPI switch.',
         status: 'UNDER_REVIEW',
         actor: 'system',
@@ -171,10 +171,136 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
       {
         id: 'tl_03',
         date: '24 Aug 2026, 09:30 AM',
-        title: 'Bank Statement Requested',
-        description: 'Investigating officer requested verified PDF bank statement to initiate fund recovery protocol.',
+        title: 'Bank Chargeback Form Requested',
+        description: 'Investigating officer at IFSO Delhi requested verified bank chargeback form to initiate lien freeze.',
         status: 'ACTION_REQUIRED',
         actor: 'investigator',
+      },
+    ],
+  },
+
+  // PERSONA 2: RAHUL VERMA - Resolved Cyber Harassment / Blackmail (NCRP-2026-410293)
+  {
+    id: 'cmp_410293',
+    complaintNumber: 'NCRP-2026-410293',
+    userId: 'usr_rahul_02',
+    type: 'CYBER_HARASSMENT',
+    title: 'Instagram Impersonation, Defamation & Extortion',
+    description: 'Imposter created duplicate social accounts using private photographs and sent ransom messages demanding cryptocurrency funds.',
+    status: 'RESOLVED',
+    statusDisplay: 'Account Takedown Requested to Meta',
+    statusDescription: 'Section 79(3)(b) IT Act notice issued to Meta Platforms. Fake profile deactivated and suspect IP logs preserved.',
+    createdAt: '2026-07-10T15:00:00Z',
+    updatedAt: '2026-07-18T16:45:00Z',
+    assignedTeam: {
+      name: 'BKC Cyber Crime Police Station',
+      policeStation: 'BKC Cyber Police',
+      district: 'Mumbai Suburban',
+      state: 'Maharashtra',
+      officerName: 'Senior Inspector Sunil Kulkarni',
+      contactNumber: '022-26504000',
+    },
+    incidentDetails: {
+      incidentDate: '2026-07-09',
+      platform: 'Instagram / WhatsApp',
+      suspectDetails: 'Phone +91-9870001122, Handle @fake_rahul_verma',
+    },
+    evidence: [
+      {
+        id: 'ev_11',
+        complaintId: 'cmp_410293',
+        fileName: 'chat_blackmail_transcripts.pdf',
+        fileType: 'application/pdf',
+        fileSize: '3.1 MB',
+        uploadedAt: '2026-07-10T15:10:00Z',
+        status: 'processed',
+      },
+      {
+        id: 'ev_12',
+        complaintId: 'cmp_410293',
+        fileName: 'fake_profile_screenshot.png',
+        fileType: 'image/png',
+        fileSize: '1.9 MB',
+        uploadedAt: '2026-07-10T15:12:00Z',
+        status: 'processed',
+      },
+    ],
+    timeline: [
+      {
+        id: 'tl_11',
+        date: '10 Jul 2026, 03:00 PM',
+        title: 'Complaint Registered',
+        description: 'Cyber harassment and impersonation report logged under Section 66D IT Act.',
+        status: 'SUBMITTED',
+        actor: 'citizen',
+      },
+      {
+        id: 'tl_12',
+        date: '12 Jul 2026, 10:30 AM',
+        title: 'Account Takedown Requested to Meta',
+        description: 'Notice issued to intermediary platform for profile suspension and IP logs preservation.',
+        status: 'UNDER_REVIEW',
+        actor: 'investigator',
+      },
+      {
+        id: 'tl_13',
+        date: '18 Jul 2026, 04:45 PM',
+        title: 'Account Deactivated & Case Resolved',
+        description: 'Fake profile successfully taken down. Suspect IP geo-located and formal advisory served.',
+        status: 'RESOLVED',
+        actor: 'investigator',
+      },
+    ],
+  },
+
+  // CASE 3: ANONYMOUS REPORT TRACKING (NCRP-2026-103948)
+  {
+    id: 'cmp_103948',
+    complaintNumber: 'NCRP-2026-103948',
+    isAnonymous: true,
+    type: 'ANONYMOUS_REPORT',
+    title: '[Anonymous Tip] Malicious APK Phishing Network Distribution',
+    description: 'Reported anonymous threat intel regarding bulk SMS gateway distributing trojanized power bill update APKs with C2 servers in Southeast Asia.',
+    status: 'UNDER_REVIEW',
+    statusDisplay: 'Threat Intelligence Analyzed & Monitored',
+    statusDescription: 'Anonymous intake token verified. CERT-In and I4C technical threat cell analyzing C2 command servers.',
+    createdAt: '2026-08-22T08:00:00Z',
+    updatedAt: '2026-08-23T10:15:00Z',
+    assignedTeam: {
+      name: 'CERT-In Threat Analysis Cell',
+      policeStation: 'CERT-In Incident Response Desk',
+      district: 'New Delhi',
+      state: 'Delhi',
+      officerName: 'Director Cyber Threat Intelligence',
+      contactNumber: '1800-11-4949',
+    },
+    evidence: [
+      {
+        id: 'ev_anon_1',
+        complaintId: 'cmp_103948',
+        fileName: 'c2_server_ip_logs.txt',
+        fileType: 'text/plain',
+        fileSize: '420 KB',
+        uploadedAt: '2026-08-22T08:05:00Z',
+        status: 'processed',
+      },
+    ],
+    timeline: [
+      {
+        id: 'tl_an_1',
+        date: '22 Aug 2026, 08:00 AM',
+        title: 'Encrypted Anonymous Tip Submitted',
+        description: 'Zero-knowledge intake token generated. Encrypted payload transmitted to national threat database.',
+        status: 'SUBMITTED',
+        actor: 'citizen',
+      },
+      {
+        id: 'tl_an_2',
+        date: '23 Aug 2026, 10:15 AM',
+        title: 'CERT-In Threat Intelligence Dispatch',
+        description: 'Malicious domain and command server blacklisting advisory initiated with major Indian telecom ISPs.',
+        status: 'UNDER_REVIEW',
+        actor: 'system',
       },
     ],
   },
@@ -700,7 +826,7 @@ class MockDatabase {
   }
 
   getCurrentUserId(): string {
-    return this.getStorage(STORAGE_KEYS.CURRENT_USER_ID, MOCK_USERS[1].id); // Defaults to Priya Verma (Active Complaint)
+    return this.getStorage(STORAGE_KEYS.CURRENT_USER_ID, MOCK_USERS[0].id); // Defaults to Priya Sharma (Active Complaint)
   }
 
   setCurrentUserId(id: string): void {
@@ -792,7 +918,7 @@ class MockDatabase {
     localStorage.setItem(STORAGE_KEYS.VERIFICATIONS, JSON.stringify(INITIAL_VERIFICATIONS));
     localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(INITIAL_NOTIFICATIONS));
     localStorage.setItem(STORAGE_KEYS.VOLUNTEERS, JSON.stringify([]));
-    localStorage.setItem(STORAGE_KEYS.CURRENT_USER_ID, JSON.stringify(MOCK_USERS[1].id));
+    localStorage.setItem(STORAGE_KEYS.CURRENT_USER_ID, JSON.stringify(MOCK_USERS[0].id));
   }
 }
 
