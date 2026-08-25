@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Search, PhoneCall, ChevronDown, Eye, Check, User, LogOut, Shield } from 'lucide-react';
+import { Menu, X, Search, PhoneCall, ChevronDown, Check, User, LogOut, Shield, Sun, Moon } from 'lucide-react';
 import { mainNavItems } from '../../data/navigation';
 import { Container } from '../common/Container';
 import { NationalEmblem } from '../common/NationalEmblem';
@@ -110,15 +110,24 @@ export const Header: React.FC = () => {
                   </button>
                 </div>
 
-                {/* High Contrast Mode */}
+                {/* Theme Toggle (Dark / Light Mode) */}
                 <button
                   type="button"
                   onClick={toggleContrast}
-                  className="hidden sm:inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded bg-[#12304A] border border-slate-700 text-slate-300 hover:text-white transition-colors"
-                  title="Toggle High Contrast"
+                  className="hidden sm:inline-flex items-center gap-1.5 text-[11px] px-2.5 py-0.5 rounded bg-[#12304A] border border-slate-700 text-slate-200 hover:text-white transition-colors"
+                  title="Toggle Light / Dark Mode"
                 >
-                  <Eye className="w-3 h-3 text-[#D8891C]" />
-                  <span>{contrastMode === 'high-contrast' ? t('header.normalMode') : t('header.highContrast')}</span>
+                  {contrastMode === 'high-contrast' ? (
+                    <>
+                      <Sun className="w-3.5 h-3.5 text-[#FFD700]" />
+                      <span>Light Mode</span>
+                    </>
+                  ) : (
+                    <>
+                      <Moon className="w-3.5 h-3.5 text-[#63B3ED]" />
+                      <span>Dark Mode</span>
+                    </>
+                  )}
                 </button>
 
                 {/* Multi-lingual Language Selector */}
@@ -189,7 +198,7 @@ export const Header: React.FC = () => {
               <NationalEmblem size="md" variant="dark" />
 
               <div className="flex flex-col">
-                <span className="text-[16px] sm:text-[18px] font-bold text-[#12304A] leading-snug tracking-tight">
+                <span className="text-[16px] sm:text-[18px] font-bold bg-gradient-to-r from-[#FF9933] via-[#0B2545] to-[#138808] bg-clip-text text-transparent leading-snug tracking-tight">
                   {t('header.portalTitle')}
                 </span>
                 <span className="text-[11.5px] sm:text-xs text-[#5E6B73] font-medium mt-0.5">

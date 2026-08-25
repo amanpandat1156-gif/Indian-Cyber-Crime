@@ -31,89 +31,188 @@ html.font-scale-larger {
   font-size: 125%; /* 20px base */
 }
 
-/* High Contrast Mode for GIGW / WCAG 2.1 AAA Compliance */
-html.high-contrast-mode {
-  filter: contrast(110%);
+/* =========================================================================
+   MODERN SLATE DARK THEME (DARK MODE)
+   ========================================================================= */
+
+html.high-contrast-mode,
+html.dark {
+  color-scheme: dark;
 }
 
-html.high-contrast-mode body {
-  background-color: #000000 !important;
-  color: #FFFFFF !important;
+html.high-contrast-mode body,
+html.dark body {
+  background-color: #0B0F17 !important;
+  color: #F8FAFC !important;
 }
 
+/* Header & Top Bars */
 html.high-contrast-mode header,
-html.high-contrast-mode nav,
-html.high-contrast-mode footer,
+html.dark header {
+  background-color: #090D16 !important;
+  border-color: #1E293B !important;
+}
+
+html.high-contrast-mode .bg-\[\#0B2235\],
+html.dark .bg-\[\#0B2235\] {
+  background-color: #06090F !important;
+  border-color: #1E293B !important;
+}
+
+/* Card & Surface Containers */
 html.high-contrast-mode .bg-white,
 html.high-contrast-mode .bg-\[\#F8F7F3\],
 html.high-contrast-mode .bg-\[\#EBF1F6\],
-html.high-contrast-mode .bg-\[\#FAF2F0\],
 html.high-contrast-mode .bg-\[\#FBFBFA\],
 html.high-contrast-mode .bg-\[\#F8F9FA\],
-html.high-contrast-mode .bg-\[\#EDF3F7\] {
-  background-color: #0B1622 !important;
-  color: #FFFFFF !important;
-  border-color: #5A738E !important;
+html.high-contrast-mode .bg-\[\#EDF3F7\],
+html.dark .bg-white,
+html.dark .bg-\[\#F8F7F3\],
+html.dark .bg-\[\#EBF1F6\],
+html.dark .bg-\[\#FBFBFA\],
+html.dark .bg-\[\#F8F9FA\],
+html.dark .bg-\[\#EDF3F7\] {
+  background-color: #1E293B !important;
+  color: #F8FAFC !important;
+  border-color: #334155 !important;
 }
 
+/* Emergency / Helpline Container */
+html.high-contrast-mode .bg-\[\#FAF2F0\],
+html.dark .bg-\[\#FAF2F0\] {
+  background-color: #1E293B !important;
+  border-color: #7F1D1D !important;
+}
+
+html.high-contrast-mode .bg-\[\#F5DDD8\],
+html.dark .bg-\[\#F5DDD8\] {
+  background-color: #450A0A !important;
+  color: #F87171 !important;
+}
+
+/* Headings (Clean Crisp White - No harsh yellow) */
 html.high-contrast-mode h1,
 html.high-contrast-mode h2,
 html.high-contrast-mode h3,
 html.high-contrast-mode h4,
 html.high-contrast-mode .text-\[\#12304A\],
 html.high-contrast-mode .text-\[\#1C252C\],
-html.high-contrast-mode .text-\[\#0B2235\] {
-  color: #FFD700 !important; /* Gold high-contrast for headings & primary accents */
+html.high-contrast-mode .text-\[\#0B2235\],
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark .text-\[\#12304A\],
+html.dark .text-\[\#1C252C\],
+html.dark .text-\[\#0B2235\] {
+  color: #F8FAFC !important;
 }
 
-html.high-contrast-mode label,
-html.high-contrast-mode .font-bold {
-  color: #FFEA79 !important;
-}
-
+/* Secondary / Body Text */
 html.high-contrast-mode p,
 html.high-contrast-mode span,
 html.high-contrast-mode .text-\[\#5E6B73\],
 html.high-contrast-mode .text-slate-600,
-html.high-contrast-mode .text-slate-700 {
-  color: #F0F4F8 !important;
+html.high-contrast-mode .text-slate-700,
+html.dark p,
+html.dark span,
+html.dark .text-\[\#5E6B73\],
+html.dark .text-slate-600,
+html.dark .text-slate-700 {
+  color: #94A3B8 !important;
 }
 
-html.high-contrast-mode a {
-  color: #79C0FF !important;
-  text-decoration: underline !important;
+html.high-contrast-mode label,
+html.high-contrast-mode .font-bold,
+html.high-contrast-mode .font-semibold,
+html.dark label,
+html.dark .font-bold,
+html.dark .font-semibold {
+  color: #F1F5F9 !important;
 }
 
+/* Interactive Links & Tab Accents */
+html.high-contrast-mode a,
+html.dark a {
+  color: #38BDF8 !important;
+}
+
+/* Form Controls & Inputs */
 html.high-contrast-mode input,
 html.high-contrast-mode select,
-html.high-contrast-mode textarea {
-  background-color: #000000 !important;
-  color: #FFFFFF !important;
-  border: 1px solid #FFD700 !important;
+html.high-contrast-mode textarea,
+html.dark input,
+html.dark select,
+html.dark textarea {
+  background-color: #0F172A !important;
+  color: #F8FAFC !important;
+  border: 1px solid #334155 !important;
 }
 
 html.high-contrast-mode input::placeholder,
-html.high-contrast-mode textarea::placeholder {
-  color: #A0AEC0 !important;
+html.high-contrast-mode textarea::placeholder,
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #64748B !important;
 }
 
+/* Action Buttons */
 html.high-contrast-mode button.bg-\[\#12304A\],
-html.high-contrast-mode button.bg-\[\#0B2235\] {
-  background-color: #FFD700 !important;
-  color: #000000 !important;
-  border: 1px solid #FFFFFF !important;
+html.high-contrast-mode a.bg-\[\#12304A\],
+html.dark button.bg-\[\#12304A\],
+html.dark a.bg-\[\#12304A\] {
+  background-color: #0284C7 !important;
+  color: #FFFFFF !important;
+  border-color: #0284C7 !important;
+}
+
+html.high-contrast-mode button.bg-\[\#12304A\]:hover,
+html.high-contrast-mode a.bg-\[\#12304A\]:hover,
+html.dark button.bg-\[\#12304A\]:hover,
+html.dark a.bg-\[\#12304A\]:hover {
+  background-color: #0369A1 !important;
+}
+
+/* Emergency 1930 Buttons (Rich Crimson Red with White Text) */
+html.high-contrast-mode .bg-\[\#8B2626\],
+html.dark .bg-\[\#8B2626\] {
+  background-color: #DC2626 !important;
+  color: #FFFFFF !important;
+  border-color: #EF4444 !important;
   font-weight: 700 !important;
 }
 
-html.high-contrast-mode .bg-\[\#8B2626\] {
-  background-color: #FF4D4D !important;
-  color: #000000 !important;
-  font-weight: bold !important;
+html.high-contrast-mode .bg-\[\#FDE8E8\],
+html.dark .bg-\[\#FDE8E8\] {
+  background-color: #450A0A !important;
+  color: #FCA5A5 !important;
 }
 
+/* Card Borders */
 html.high-contrast-mode .border-\[\#DDE2E4\],
 html.high-contrast-mode .border-\[\#CCD3D6\],
-html.high-contrast-mode .border-\[\#E2E6E8\] {
-  border-color: #4A637B !important;
+html.high-contrast-mode .border-\[\#E2E6E8\],
+html.high-contrast-mode .border-\[\#DCE4EC\],
+html.high-contrast-mode .border-\[\#F0E2DF\],
+html.dark .border-\[\#DDE2E4\],
+html.dark .border-\[\#CCD3D6\],
+html.dark .border-\[\#E2E6E8\],
+html.dark .border-\[\#DCE4EC\],
+html.dark .border-\[\#F0E2DF\] {
+  border-color: #334155 !important;
 }
 
+/* Floating Persona Drawer & Overlays in Dark Mode */
+html.high-contrast-mode .shadow-2xl,
+html.dark .shadow-2xl {
+  background-color: #1E293B !important;
+  border-color: #334155 !important;
+  color: #F8FAFC !important;
+}
+
+/* Footer in Dark Mode */
+html.high-contrast-mode footer,
+html.dark footer {
+  background-color: #06090F !important;
+  border-color: #1E293B !important;
+}

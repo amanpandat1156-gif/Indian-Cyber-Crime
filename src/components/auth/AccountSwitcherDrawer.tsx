@@ -23,16 +23,16 @@ export const AccountSwitcherDrawer: React.FC = () => {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-[#0B2235] text-white text-xs font-semibold shadow-2xl border border-slate-700 hover:bg-[#12304A] transition-all group"
+        className="flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-slate-900/95 backdrop-blur-sm text-slate-200 text-xs font-semibold shadow-2xl border border-slate-700 hover:bg-slate-800 transition-all group"
         title="Hackathon Quick-Switch: Change Demo Persona"
       >
         <span className="flex h-2 w-2 relative">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FFAE42] opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FFAE42]"></span>
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-400"></span>
         </span>
-        <Users className="w-3.5 h-3.5 text-[#FFAE42]" />
+        <Users className="w-3.5 h-3.5 text-sky-400" />
         <span className="hidden sm:inline text-slate-300 font-normal">Demo Persona:</span>
-        <span className="font-bold text-[#FFAE42] max-w-[130px] truncate">
+        <span className="font-bold text-sky-400 max-w-[130px] truncate">
           {user ? user.name.split(' ')[0] : 'Logged Out'}
         </span>
         {isOpen ? <ChevronDown className="w-3.5 h-3.5 text-slate-400" /> : <ChevronUp className="w-3.5 h-3.5 text-slate-400" />}
