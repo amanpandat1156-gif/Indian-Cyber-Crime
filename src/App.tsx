@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AccessibilityProvider } from './context/AccessibilityContext';
 import { AuthProvider } from './context/AuthContext';
+import { LanguageProvider } from './context/LanguageContext';
 import { RootLayout } from './components/layout/RootLayout';
 import { AccountSwitcherDrawer } from './components/auth/AccountSwitcherDrawer';
 
@@ -21,11 +22,12 @@ import { PlaceholderPage } from './pages/PlaceholderPage';
 
 export const App: React.FC = () => {
   return (
-    <AccessibilityProvider>
-      <AuthProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<RootLayout />}>
+    <LanguageProvider>
+      <AccessibilityProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<RootLayout />}>
               <Route index element={<HomePage />} />
 
               {/* Citizen Reporting Workflows */}
@@ -89,6 +91,7 @@ export const App: React.FC = () => {
         </BrowserRouter>
       </AuthProvider>
     </AccessibilityProvider>
+  </LanguageProvider>
   );
 };
 

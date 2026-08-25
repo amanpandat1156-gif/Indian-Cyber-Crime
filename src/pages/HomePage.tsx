@@ -6,8 +6,11 @@ import { TrackComplaintBanner } from '../components/home/TrackComplaintBanner';
 import { EmergencySection } from '../components/home/EmergencySection';
 import { LowerCardsSection } from '../components/home/LowerCardsSection';
 import { QuickLinksSection } from '../components/home/QuickLinksSection';
+import { useLanguage } from '../context/LanguageContext';
 
 export const HomePage: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <div className="w-full bg-[#F8F7F3] min-h-screen">
       <Container size="full" className="max-w-[1400px] py-8 sm:py-10 px-3 sm:px-6 lg:px-8">
@@ -18,13 +21,13 @@ export const HomePage: React.FC = () => {
             {/* Hero Header */}
             <div className="mb-6">
               <div className="text-[11px] sm:text-[12px] font-bold tracking-widest text-[#1D60A1] uppercase mb-2">
-                SAFE CITIZENS. A SAFER DIGITAL INDIA.
+                {t('home.heroBadge')}
               </div>
               <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-bold text-[#12304A] tracking-tight leading-tight">
-                How can we help?
+                {t('home.howCanWeHelp')}
               </h1>
               <p className="mt-2.5 text-sm sm:text-[15px] text-[#5E6B73] leading-relaxed max-w-2xl">
-                Tell us what happened. We'll guide you through the next steps and help you get the right support.
+                {t('home.heroSubtitle')}
               </p>
             </div>
 

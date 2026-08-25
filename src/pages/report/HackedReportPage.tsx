@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import { ShieldAlert, ArrowLeft, ArrowRight, CheckCircle2, Check } from 'lucide-react';
 import { Container } from '../../components/common/Container';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { complaintService } from '../../services/complaintService';
 import { Complaint } from '../../types';
 
 export const HackedReportPage: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [step, setStep] = useState<1 | 2 | 3>(1);
 
   // Security checklist
@@ -58,7 +60,7 @@ export const HackedReportPage: React.FC = () => {
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#5E6B73] hover:text-[#12304A]"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back to Home</span>
+            <span>{t('common.backToHome')}</span>
           </Link>
         </div>
 
@@ -68,13 +70,13 @@ export const HackedReportPage: React.FC = () => {
             <div className="mb-6">
               <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-badge bg-rose-50 border border-rose-200 text-[11px] font-bold text-[#8B2626] uppercase mb-2">
                 <ShieldAlert className="w-3.5 h-3.5" />
-                IMMEDIATE TRIAGE: SECURE YOUR ACCOUNT FIRST
+                {t('form.hacked.triageBadge')}
               </div>
               <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A] tracking-tight">
-                Account or Device Compromised
+                {t('form.hacked.title')}
               </h1>
               <p className="mt-1.5 text-sm text-[#5E6B73]">
-                Before filing a formal cyber complaint, please take these immediate containment steps to stop unauthorized misuse and lock out the attacker.
+                {t('form.hacked.subtitle')}
               </p>
             </div>
 
@@ -150,7 +152,7 @@ export const HackedReportPage: React.FC = () => {
                 onClick={() => setStep(2)}
                 className="inline-flex items-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-semibold hover:bg-[#0B2235]"
               >
-                <span>Proceed to Report Incident</span>
+                <span>{t('form.hacked.proceedBtn')}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>

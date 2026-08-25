@@ -2,13 +2,25 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Shield, Lock, User, Search, LifeBuoy, ArrowRight, IndianRupee } from 'lucide-react';
 import { IntentCardItem } from '../../data/intentCards';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface IntentCardProps {
   item: IntentCardItem;
   className?: string;
 }
 
+const cardTranslationMap: Record<string, { titleKey: string; descKey: string }> = {
+  'lost-money': { titleKey: 'card.lostMoney.title', descKey: 'card.lostMoney.desc' },
+  'harassment-threats': { titleKey: 'card.harassment.title', descKey: 'card.harassment.desc' },
+  'hacked-account': { titleKey: 'card.hacked.title', descKey: 'card.hacked.desc' },
+  'report-anonymous': { titleKey: 'card.anonymous.title', descKey: 'card.anonymous.desc' },
+  'verify-suspicious': { titleKey: 'card.verify.title', descKey: 'card.verify.desc' },
+  'need-help': { titleKey: 'card.needHelp.title', descKey: 'card.needHelp.desc' },
+};
+
 export const IntentCard: React.FC<IntentCardProps> = ({ item, className = '' }) => {
+  const { t } = useLanguage();
+
   const renderIcon = () => {
     switch (item.iconType) {
       case 'rupee':
@@ -28,6 +40,13 @@ export const IntentCard: React.FC<IntentCardProps> = ({ item, className = '' }) 
     }
   };
 
+  const translatedTitle = cardTranslationMap[item.id]
+    ? t(cardTranslationMap[item.id].titleKey, item.title)
+    : item.title;
+  const translatedDesc = cardTranslationMap[item.id]
+    ? t(cardTranslationMap[item.id].descKey, item.description)
+    : item.description;
+
   return (
     <Link
       to={item.href}
@@ -41,12 +60,12 @@ export const IntentCard: React.FC<IntentCardProps> = ({ item, className = '' }) 
 
         {/* Title */}
         <h3 className="text-[15px] font-bold text-[#12304A] leading-snug tracking-tight">
-          {item.title}
+          {translatedTitle}
         </h3>
 
         {/* Description */}
         <p className="mt-2 text-[12.5px] text-[#5E6B73] leading-relaxed">
-          {item.description}
+          {translatedDesc}
         </p>
       </div>
 

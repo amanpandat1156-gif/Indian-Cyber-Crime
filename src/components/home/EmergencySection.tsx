@@ -8,8 +8,11 @@ import {
   PhoneCall,
   ArrowRight,
 } from "lucide-react";
+import { useLanguage } from "../../context/LanguageContext";
 
 export const EmergencySection: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <aside
       className="w-full h-full bg-[#FAF2F0] rounded-[10px] border border-[#F0E2DF] p-6 sm:p-7 flex flex-col justify-between"
@@ -24,17 +27,17 @@ export const EmergencySection: React.FC = () => {
 
         {/* Eyebrow */}
         <div className="text-[11.5px] font-bold tracking-wider uppercase text-[#8B2626] mb-1">
-          FINANCIAL FRAUD? ACT FAST.
+          {t('home.emergencyBadge')}
         </div>
 
         {/* Heading */}
         <h2 className="text-3xl sm:text-4xl font-extrabold text-[#12304A] tracking-tight">
-          Call 1930
+          {t('home.emergencyTitle')}
         </h2>
 
         {/* Supporting Copy */}
         <p className="mt-2 text-[13px] text-[#5E6B73] leading-relaxed">
-          Report cyber financial fraud and get immediate assistance.
+          {t('home.emergencySubtitle')}
         </p>
 
         {/* Primary Maroon CTA Button */}
@@ -44,7 +47,7 @@ export const EmergencySection: React.FC = () => {
             className="w-full inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-[6px] bg-[#8B2626] hover:bg-[#771F1F] text-white text-[14px] font-bold shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B2626]"
           >
             <PhoneCall className="w-4 h-4" />
-            <span>Call 1930</span>
+            <span>{t('home.call1930Now')}</span>
           </a>
         </div>
       </div>
@@ -61,7 +64,7 @@ export const EmergencySection: React.FC = () => {
       {/* Divider & Other Ways to Get Help */}
       <div className="pt-4 border-t border-[#EBDCDA]">
         <h3 className="text-[14px] font-bold text-[#1C252C] mb-3">
-          Other ways to get help
+          {t('home.otherWaysHelp')}
         </h3>
 
         <div className="flex flex-col space-y-2.5">
@@ -71,7 +74,7 @@ export const EmergencySection: React.FC = () => {
           >
             <div className="flex items-center gap-2.5">
               <MapPin className="w-4 h-4 text-[#5E6B73] group-hover:text-[#12304A] transition-colors" />
-              <span>Find my cyber police station</span>
+              <span>{t('home.findPoliceStation')}</span>
             </div>
             <ArrowRight className="w-3.5 h-3.5 text-[#5E6B73] group-hover:text-[#12304A] group-hover:translate-x-0.5 transition-all" />
           </Link>
@@ -82,7 +85,7 @@ export const EmergencySection: React.FC = () => {
           >
             <div className="flex items-center gap-2.5">
               <Landmark className="w-4 h-4 text-[#5E6B73] group-hover:text-[#12304A] transition-colors" />
-              <span>Bank-related assistance</span>
+              <span>{t('home.bankAssistance')}</span>
             </div>
             <ArrowRight className="w-3.5 h-3.5 text-[#5E6B73] group-hover:text-[#12304A] group-hover:translate-x-0.5 transition-all" />
           </Link>
@@ -93,7 +96,7 @@ export const EmergencySection: React.FC = () => {
           >
             <div className="flex items-center gap-2.5">
               <ArrowUpRight className="w-4 h-4 text-[#5E6B73] group-hover:text-[#12304A] transition-colors" />
-              <span>Complaint escalation</span>
+              <span>{t('home.complaintEscalation')}</span>
             </div>
             <ArrowRight className="w-3.5 h-3.5 text-[#5E6B73] group-hover:text-[#12304A] group-hover:translate-x-0.5 transition-all" />
           </Link>
@@ -104,7 +107,7 @@ export const EmergencySection: React.FC = () => {
           >
             <div className="flex items-center gap-2.5">
               <Phone className="w-4 h-4 text-[#5E6B73] group-hover:text-[#12304A] transition-colors" />
-              <span>Official contacts</span>
+              <span>{t('home.officialContacts')}</span>
             </div>
             <ArrowRight className="w-3.5 h-3.5 text-[#5E6B73] group-hover:text-[#12304A] group-hover:translate-x-0.5 transition-all" />
           </Link>

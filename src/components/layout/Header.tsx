@@ -6,22 +6,17 @@ import { Container } from '../common/Container';
 import { NationalEmblem } from '../common/NationalEmblem';
 import { useAccessibility } from '../../context/AccessibilityContext';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { NotificationDrawer } from '../notifications/NotificationDrawer';
 import { LoginModal } from '../auth/LoginModal';
 
-const languages = [
-  { code: 'en', label: 'English', native: 'English' },
-  { code: 'hi', label: 'Hindi', native: 'हिन्दी' },
-  { code: 'bn', label: 'Bengali', native: 'বাংলা' },
-  { code: 'te', label: 'Telugu', native: 'తెలుగు' },
-  { code: 'mr', label: 'Marathi', native: 'मराठी' },
-  { code: 'ta', label: 'Tamil', native: 'தமிழ்' },
-  { code: 'gu', label: 'Gujarati', native: 'ગુજરાતી' },
-  { code: 'kn', label: 'Kannada', native: 'ಕನ್ನಡ' },
-  { code: 'ml', label: 'Malayalam', native: 'മലയാളം' },
-  { code: 'pa', label: 'Punjabi', native: 'ਪੰਜਾਬੀ' },
-  { code: 'or', label: 'Odia', native: 'ଓଡ଼ିଆ' },
-];
+const navItemKeyMap: Record<string, string> = {
+  '/': 'nav.home',
+  '/track': 'nav.track',
+  '/verify': 'nav.verify',
+  '/help': 'nav.help',
+  '/volunteer': 'nav.volunteer',
+};
 
 export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -29,13 +24,13 @@ export const Header: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [selectedLang, setSelectedLang] = useState(languages[0]);
   const location = useLocation();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   const { fontSize, setFontSize, contrastMode, toggleContrast } = useAccessibility();
   const { user, openLoginModal, logout } = useAuth();
+  const { currentLang, setCurrentLang, t, languages, currentLangOption } = useLanguage();
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -71,9 +66,9 @@ export const Header: React.FC = () => {
                   <span className="w-2.5 h-1.5 bg-white rounded-[1px]"></span>
                   <span className="w-2.5 h-1.5 bg-[#138808] rounded-[1px]"></span>
                 </div>
-                <span className="font-semibold tracking-wide text-white">GOVERNMENT OF INDIA</span>
+                <span className="font-semibold tracking-wide text-white">{t('header.govTitle')}</span>
                 <span className="text-slate-500 hidden md:inline">|</span>
-                <span className="hidden md:inline text-slate-300">Ministry of Home Affairs &bull; Indian Cybercrime Coordination Centre (I4C)</span>
+                <span className="hidden md:inline text-slate-300">{t('header.ministry')}</span>
               </div>
 
               {/* Right: Accessibility Controls + Multi-Language + Prominent 1930 Helpline */}
@@ -82,7 +77,7 @@ export const Header: React.FC = () => {
                   href="#main-content"
                   className="sr-only focus:not-sr-only focus:absolute focus:top-1 focus:left-2 focus:z-50 focus:px-3 focus:py-1 focus:bg-[#12304A] focus:text-white focus:rounded text-xs"
                 >
-                  Skip to main content
+                  {t('header.skipToContent')}
                 </a>
 
                 {/* Font Resizer */}
@@ -123,7 +118,7 @@ export const Header: React.FC = () => {
                   title="Toggle High Contrast"
                 >
                   <Eye className="w-3 h-3 text-[#D8891C]" />
-                  <span>{contrastMode === 'high-contrast' ? 'Normal Mode' : 'High Contrast'}</span>
+                  <span>{contrastMode === 'high-contrast' ? t('header.normalMode') : t('header.highContrast')}</span>
                 </button>
 
                 {/* Multi-lingual Language Selector */}
@@ -132,8 +127,9 @@ export const Header: React.FC = () => {
                     type="button"
                     onClick={() => setLangDropdownOpen(!langDropdownOpen)}
                     className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#12304A] border border-slate-700 text-white text-[11px] font-medium hover:border-slate-500 transition-colors"
+                    aria-label="Select website language"
                   >
-                    <span>{selectedLang.native}</span>
+                    <span>{currentLangOption.native}</span>
                     <ChevronDown className="w-3 h-3 text-slate-400" />
                   </button>
 
@@ -147,15 +143,15 @@ export const Header: React.FC = () => {
                           key={lang.code}
                           type="button"
                           onClick={() => {
-                            setSelectedLang(lang);
+                            setCurrentLang(lang.code);
                             setLangDropdownOpen(false);
                           }}
                           className={`w-full flex items-center justify-between px-3 py-1.5 text-xs text-left hover:bg-[#F0F4F8] transition-colors ${
-                            selectedLang.code === lang.code ? 'font-bold text-[#12304A] bg-[#EDF3F7]' : 'text-[#334155]'
+                            currentLang === lang.code ? 'font-bold text-[#12304A] bg-[#EDF3F7]' : 'text-[#334155]'
                           }`}
                         >
                           <span>{lang.native} ({lang.label})</span>
-                          {selectedLang.code === lang.code && <Check className="w-3 h-3 text-[#12304A]" />}
+                          {currentLang === lang.code && <Check className="w-3 h-3 text-[#12304A]" />}
                         </button>
                       ))}
                     </div>
@@ -169,7 +165,7 @@ export const Header: React.FC = () => {
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
                   <PhoneCall className="w-3 h-3 text-white" />
-                  <span>Helpline: <strong className="text-white">1930</strong></span>
+                  <span>{t('header.helpline')}</span>
                 </a>
               </div>
             </div>
@@ -189,10 +185,10 @@ export const Header: React.FC = () => {
 
               <div className="flex flex-col">
                 <span className="text-[16px] sm:text-[18px] font-bold text-[#12304A] leading-snug tracking-tight">
-                  National Cyber Crime<br className="hidden sm:inline" /> Reporting Portal
+                  {t('header.portalTitle')}
                 </span>
                 <span className="text-[11.5px] sm:text-xs text-[#5E6B73] font-medium mt-0.5">
-                  Ministry of Home Affairs &bull; Government of India
+                  {t('header.portalSubtitle')}
                 </span>
               </div>
             </Link>
@@ -201,6 +197,7 @@ export const Header: React.FC = () => {
             <nav className="hidden lg:flex items-center gap-7 text-[14.5px]" aria-label="Main Navigation">
               {mainNavItems.map((item) => {
                 const isActive = location.pathname === item.href;
+                const translatedLabel = t(navItemKeyMap[item.href] || item.label, item.label);
                 return (
                   <Link
                     key={item.href}
@@ -211,7 +208,7 @@ export const Header: React.FC = () => {
                         : 'text-[#4A5560] hover:text-[#12304A]'
                     }`}
                   >
-                    {item.label}
+                    {translatedLabel}
                   </Link>
                 );
               })}
@@ -281,7 +278,7 @@ export const Header: React.FC = () => {
                   onClick={openLoginModal}
                   className="px-3.5 py-1.5 rounded-md bg-[#12304A] text-white text-xs font-semibold hover:bg-[#0B2235] transition-colors"
                 >
-                  Citizen Login
+                  {t('header.login')}
                 </button>
               )}
             </div>
@@ -319,7 +316,7 @@ export const Header: React.FC = () => {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search cybercrime guidance, 1930 helpline, or police stations..."
+                  placeholder={t('header.searchPlaceholder')}
                   className="w-full pl-10 pr-20 py-2 text-sm bg-white rounded-md border border-[#DDE2E4] focus:border-[#12304A] focus:outline-none text-[#1C252C] shadow-xs"
                   autoFocus
                 />
@@ -350,7 +347,7 @@ export const Header: React.FC = () => {
                       : 'text-[#4A5560] hover:bg-[#F8F7F3]'
                   }`}
                 >
-                  {item.label}
+                  {t(navItemKeyMap[item.href] || item.label, item.label)}
                 </Link>
               ))}
             </nav>
@@ -370,7 +367,7 @@ export const Header: React.FC = () => {
                   }}
                   className="w-full py-2.5 rounded-md bg-[#12304A] text-white text-xs font-semibold"
                 >
-                  Citizen Login
+                  {t('header.login')}
                 </button>
               )}
             </div>
