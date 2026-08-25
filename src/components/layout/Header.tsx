@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Search, PhoneCall, ChevronDown, Check, User, LogOut, Shield, Sun, Moon } from 'lucide-react';
+import { Menu, X, Search, PhoneCall, ChevronDown, Check, User, LogOut, Shield } from 'lucide-react';
 import { mainNavItems } from '../../data/navigation';
 import { Container } from '../common/Container';
 import { NationalEmblem } from '../common/NationalEmblem';
@@ -28,7 +28,7 @@ export const Header: React.FC = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
-  const { fontSize, setFontSize, contrastMode, toggleContrast } = useAccessibility();
+  const { fontSize, setFontSize } = useAccessibility();
   const { user, openLoginModal, logout } = useAuth();
   const { currentLang, setCurrentLang, t, languages, currentLangOption } = useLanguage();
 
@@ -109,26 +109,6 @@ export const Header: React.FC = () => {
                     A+
                   </button>
                 </div>
-
-                {/* Theme Toggle (Dark / Light Mode) */}
-                <button
-                  type="button"
-                  onClick={toggleContrast}
-                  className="hidden sm:inline-flex items-center gap-1.5 text-[11px] px-2.5 py-0.5 rounded bg-[#12304A] border border-slate-700 text-slate-200 hover:text-white transition-colors"
-                  title="Toggle Light / Dark Mode"
-                >
-                  {contrastMode === 'high-contrast' ? (
-                    <>
-                      <Sun className="w-3.5 h-3.5 text-[#FFD700]" />
-                      <span>Light Mode</span>
-                    </>
-                  ) : (
-                    <>
-                      <Moon className="w-3.5 h-3.5 text-[#63B3ED]" />
-                      <span>Dark Mode</span>
-                    </>
-                  )}
-                </button>
 
                 {/* Multi-lingual Language Selector */}
                 <div className="relative" ref={dropdownRef}>

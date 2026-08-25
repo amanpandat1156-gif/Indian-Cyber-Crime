@@ -1,44 +1,74 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Container } from '../common/Container';
-import { NationalEmblem } from '../common/NationalEmblem';
 import { ShieldCheck, Lock, Activity } from 'lucide-react';
+import { PolicyModal, PolicyType } from '../common/PolicyModal';
 
 export const Footer: React.FC = () => {
-  return (
-    <footer className="bg-[#0B2235] text-slate-300 pt-12 pb-8 border-t border-slate-800" aria-label="Portal Footer">
-      <Container size="full" className="max-w-[1400px]">
-        {/* 1. Main Navigation & Identity Row */}
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 pb-8 border-b border-slate-800/80 px-2 sm:px-4">
-          {/* Left: National Emblem & Portal Title */}
-          <div className="flex items-center gap-4">
-            <NationalEmblem size="md" variant="light" />
+  const [activePolicy, setActivePolicy] = useState<PolicyType | null>(null);
 
-            <div className="flex flex-col">
-              <span className="text-[15px] sm:text-[16px] font-bold text-white leading-tight">
-                National Cyber Crime<br />Reporting Portal
-              </span>
-              <span className="text-[11.5px] text-slate-400 mt-0.5 font-medium">
-                Ministry of Home Affairs &bull; Government of India
-              </span>
+  return (
+    <>
+      <footer className="bg-[#0B2235] text-slate-300 pt-12 pb-8 border-t border-slate-800" aria-label="Portal Footer">
+        <Container size="full" className="max-w-[1400px]">
+          {/* 1. Main Navigation & Identity Row */}
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 pb-8 border-b border-slate-800/80 px-2 sm:px-4">
+            {/* Left: National Emblem & Portal Title */}
+            <div className="flex items-center gap-4">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg"
+                alt="State Emblem of India"
+                className="w-10 h-14 object-contain brightness-0 invert opacity-90 shrink-0"
+                loading="lazy"
+              />
+
+              <div className="flex flex-col">
+                <span className="text-[15px] sm:text-[16px] font-bold text-white leading-tight">
+                  National Cyber Crime<br />Reporting Portal
+                </span>
+                <span className="text-[11.5px] text-slate-400 mt-0.5 font-medium">
+                  Ministry of Home Affairs &bull; Government of India
+                </span>
+              </div>
+
+              {/* Vertical separator */}
+              <div className="hidden md:block h-10 w-[1px] bg-slate-700 mx-3"></div>
             </div>
 
-            {/* Vertical separator */}
-            <div className="hidden md:block h-10 w-[1px] bg-slate-700 mx-3"></div>
-          </div>
-
-          {/* Center: Legal & GIGW Mandatory Policy Links */}
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[12.5px] text-slate-300">
-            <Link to="/about" className="hover:text-white hover:underline transition-colors">About Us</Link>
-            <span className="text-slate-600">|</span>
-            <Link to="/privacy" className="hover:text-white hover:underline transition-colors">Privacy</Link>
-            <span className="text-slate-600">|</span>
-            <Link to="/terms" className="hover:text-white hover:underline transition-colors">Terms of Use</Link>
-            <span className="text-slate-600">|</span>
-            <Link to="/accessibility" className="hover:text-white hover:underline transition-colors">Accessibility</Link>
-            <span className="text-slate-600">|</span>
-            <Link to="/help" className="hover:text-white hover:underline transition-colors">Contact Us</Link>
-          </div>
+            {/* Center: Legal & GIGW Mandatory Policy Links */}
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[12.5px] text-slate-300">
+              <Link to="/about" className="hover:text-white hover:underline transition-colors">
+                About Us
+              </Link>
+              <span className="text-slate-600">|</span>
+              <button
+                type="button"
+                onClick={() => setActivePolicy('privacy')}
+                className="hover:text-white hover:underline transition-colors focus-visible:outline-none"
+              >
+                Privacy
+              </button>
+              <span className="text-slate-600">|</span>
+              <button
+                type="button"
+                onClick={() => setActivePolicy('terms')}
+                className="hover:text-white hover:underline transition-colors focus-visible:outline-none"
+              >
+                Terms of Use
+              </button>
+              <span className="text-slate-600">|</span>
+              <button
+                type="button"
+                onClick={() => setActivePolicy('accessibility')}
+                className="hover:text-white hover:underline transition-colors focus-visible:outline-none"
+              >
+                Accessibility
+              </button>
+              <span className="text-slate-600">|</span>
+              <Link to="/help" className="hover:text-white hover:underline transition-colors">
+                Contact Us
+              </Link>
+            </div>
 
           {/* Right: Social Follow Links */}
           <div className="flex items-center gap-4 text-xs text-slate-400">
@@ -146,5 +176,13 @@ export const Footer: React.FC = () => {
         </div>
       </Container>
     </footer>
-  );
+
+    {/* Accessible Policy Dialog Modal */}
+    <PolicyModal
+      isOpen={activePolicy !== null}
+      type={activePolicy}
+      onClose={() => setActivePolicy(null)}
+    />
+  </>
+);
 };
