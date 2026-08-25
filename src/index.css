@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: #F8F7F3;
+    color: #1C252C;
+  }
+
+  /* Accessible focus indicators */
+  :focus-visible {
+    outline: 2px solid #12304A;
+    outline-offset: 2px;
+  }
+}
+
+/* Subtle line clamp and typography helpers */
+.text-balance {
+  text-wrap: balance;
+}
