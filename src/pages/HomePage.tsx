@@ -12,9 +12,9 @@ export const HomePage: React.FC = () => {
     <div className="w-full bg-[#F8F7F3] min-h-screen">
       <Container size="full" className="max-w-[1400px] py-8 sm:py-10 px-3 sm:px-6 lg:px-8">
         {/* Top 2-Column Hero & Services Area */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-7 items-start">
-          {/* Left Column (approx 68% width on desktop) */}
-          <div className="lg:col-span-8 flex flex-col justify-between">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-7 items-stretch">
+          {/* Left Column (Hero + 6 Intent Cards + Track Banner) */}
+          <div className="flex-1 flex flex-col justify-between min-w-0">
             {/* Hero Header */}
             <div className="mb-6">
               <div className="text-[11px] sm:text-[12px] font-bold tracking-widest text-[#1D60A1] uppercase mb-2">
@@ -39,8 +39,8 @@ export const HomePage: React.FC = () => {
             <TrackComplaintBanner />
           </div>
 
-          {/* Right Column (approx 32% width on desktop) */}
-          <div className="lg:col-span-4 flex flex-col">
+          {/* Right Column (Emergency Sidebar - Constrained Max-Width matching reference image) */}
+          <div className="w-full lg:w-[330px] xl:w-[355px] shrink-0 flex flex-col">
             <EmergencySection />
           </div>
         </div>
