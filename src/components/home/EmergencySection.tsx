@@ -8,6 +8,7 @@ import {
   PhoneCall,
   ArrowRight,
 } from "lucide-react";
+import { InteractiveGridBackground } from "../common/InteractiveGridBackground";
 import { useLanguage } from "../../context/LanguageContext";
 
 export const EmergencySection: React.FC = () => {
@@ -15,11 +16,19 @@ export const EmergencySection: React.FC = () => {
 
   return (
     <aside
-      className="w-full h-full bg-[#FAF2F0] rounded-[10px] border border-[#F0E2DF] p-6 sm:p-7 flex flex-col justify-between"
+      className="relative w-full h-full bg-[#FAF2F0] rounded-[10px] border border-[#F0E2DF] p-6 sm:p-7 flex flex-col justify-between overflow-hidden group"
       aria-label="Emergency Financial Fraud Helpline"
     >
+      <InteractiveGridBackground
+        theme="maroon"
+        baseColor="rgba(139, 38, 38, 0.08)"
+        activeColor="rgba(139, 38, 38, 0.65)"
+        gridSpacing={26}
+        interactionRadius={130}
+      />
+
       {/* Top CTA Block */}
-      <div>
+      <div className="relative z-10">
         {/* Top Circular Phone Icon */}
         <div className="w-12 h-12 rounded-full bg-[#F5DDD8] text-[#8B2626] flex items-center justify-center mb-4">
           <Phone className="w-5 h-5 stroke-[2]" />
@@ -53,7 +62,7 @@ export const EmergencySection: React.FC = () => {
       </div>
 
       {/* Centered Image Container */}
-      <div className="w-full flex-1 flex items-center justify-center py-3 overflow-hidden">
+      <div className="relative z-10 w-full flex-1 flex items-center justify-center py-3 overflow-hidden">
         <img
           src="/helpline-banner.png.png"
           alt="Helpline Assistance"
@@ -62,7 +71,7 @@ export const EmergencySection: React.FC = () => {
       </div>
 
       {/* Divider & Other Ways to Get Help */}
-      <div className="pt-4 border-t border-[#EBDCDA]">
+      <div className="relative z-10 pt-4 border-t border-[#EBDCDA]">
         <h3 className="text-[14px] font-bold text-[#1C252C] mb-3">
           {t('home.otherWaysHelp')}
         </h3>

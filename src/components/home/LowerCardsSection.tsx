@@ -1,14 +1,22 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Shield, ArrowRight } from 'lucide-react';
+import { InteractiveGridBackground } from '../common/InteractiveGridBackground';
 
 export const LowerCardsSection: React.FC = () => {
   return (
     <section className="mt-8" aria-label="Cyber Safety and Portal Information">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left Card: Stay Safe Online with Laptop Illustration */}
-        <div className="lg:col-span-7 bg-[#EBF1F6] rounded-[10px] border border-[#DCE4EC] p-6 sm:p-7 flex flex-col sm:flex-row items-center justify-between gap-6 overflow-hidden">
-          <div className="flex-1">
+        <div className="relative lg:col-span-7 bg-[#EBF1F6] rounded-[10px] border border-[#DCE4EC] p-6 sm:p-7 flex flex-col sm:flex-row items-center justify-between gap-6 overflow-hidden group">
+          <InteractiveGridBackground
+            theme="navy"
+            baseColor="rgba(18, 48, 74, 0.06)"
+            activeColor="rgba(29, 96, 161, 0.65)"
+            gridSpacing={26}
+            interactionRadius={130}
+          />
+          <div className="relative z-10 flex-1">
             <div className="flex items-center gap-2 mb-2.5">
               <div className="w-6 h-6 rounded-[5px] bg-[#DDE7F0] text-[#12304A] flex items-center justify-center">
                 <Shield className="w-3.5 h-3.5 stroke-[2]" />
@@ -38,7 +46,7 @@ export const LowerCardsSection: React.FC = () => {
           </div>
 
           {/* Minimalist Laptop & Plant Illustration */}
-          <div className="shrink-0 w-44 sm:w-52 h-36 flex items-end justify-center">
+          <div className="relative z-10 shrink-0 w-44 sm:w-52 h-36 flex items-end justify-center">
             <svg viewBox="0 0 200 130" className="w-full h-full">
               {/* Ground Shadow */}
               <ellipse cx="100" cy="115" rx="85" ry="8" fill="#D5E0EA" />
