@@ -1,10 +1,21 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Phone, MapPin, Landmark, ArrowUpRight, PhoneCall, ArrowRight } from 'lucide-react';
+import React from "react";
+import { Link } from "react-router-dom";
+import {
+  Phone,
+  MapPin,
+  Landmark,
+  ArrowUpRight,
+  PhoneCall,
+  ArrowRight,
+} from "lucide-react";
 
 export const EmergencySection: React.FC = () => {
   return (
-    <aside className="w-full h-full bg-[#FAF2F0] rounded-[10px] border border-[#F0E2DF] p-6 sm:p-7 flex flex-col justify-between" aria-label="Emergency Financial Fraud Helpline">
+    <aside
+      className="w-full h-full bg-[#FAF2F0] rounded-[10px] border border-[#F0E2DF] p-6 sm:p-7 flex flex-col justify-between"
+      aria-label="Emergency Financial Fraud Helpline"
+    >
+      {/* Top CTA Block */}
       <div>
         {/* Top Circular Phone Icon */}
         <div className="w-12 h-12 rounded-full bg-[#F5DDD8] text-[#8B2626] flex items-center justify-center mb-4">
@@ -16,7 +27,7 @@ export const EmergencySection: React.FC = () => {
           FINANCIAL FRAUD? ACT FAST.
         </div>
 
-        {/* Huge Heading */}
+        {/* Heading */}
         <h2 className="text-3xl sm:text-4xl font-extrabold text-[#12304A] tracking-tight">
           Call 1930
         </h2>
@@ -27,7 +38,7 @@ export const EmergencySection: React.FC = () => {
         </p>
 
         {/* Primary Maroon CTA Button */}
-        <div className="mt-5">
+        <div className="mt-4">
           <a
             href="tel:1930"
             className="w-full inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-[6px] bg-[#8B2626] hover:bg-[#771F1F] text-white text-[14px] font-bold shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B2626]"
@@ -38,13 +49,22 @@ export const EmergencySection: React.FC = () => {
         </div>
       </div>
 
+      {/* Centered Image Container */}
+      <div className="w-full flex-1 flex items-center justify-center py-3 overflow-hidden">
+        <img
+          src="/helpline-banner.png.png"
+          alt="Helpline Assistance"
+          className="w-full h-auto max-h-56 object-contain rounded-lg"
+        />
+      </div>
+
       {/* Divider & Other Ways to Get Help */}
-      <div className="mt-6 pt-5 border-t border-[#EBDCDA]">
+      <div className="pt-4 border-t border-[#EBDCDA]">
         <h3 className="text-[14px] font-bold text-[#1C252C] mb-3">
           Other ways to get help
         </h3>
 
-        <div className="flex flex-col space-y-3">
+        <div className="flex flex-col space-y-2.5">
           <Link
             to="/help#police-stations"
             className="flex items-center justify-between text-[13px] text-[#2C3840] hover:text-[#12304A] group py-0.5"
