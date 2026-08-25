@@ -7,6 +7,7 @@ import { AutoFillDemoButton } from '../../components/common/AutoFillDemoButton';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useDemo } from '../../context/DemoContext';
+import { ParsedIncidentIntent } from '../../services/aiService';
 import { complaintService } from '../../services/complaintService';
 import { evidenceService } from '../../services/evidenceService';
 import { Evidence, Complaint } from '../../types';
@@ -23,6 +24,13 @@ export const HarassmentReportPage: React.FC = () => {
     setTitle(sc.title);
     setDescription(sc.description);
     setSuspectDetails(sc.suspectDetails);
+  };
+
+  const handleAiAutoDraft = (parsed: ParsedIncidentIntent) => {
+    if (parsed.suggestedTitle) setTitle(parsed.suggestedTitle);
+    if (parsed.suspectIdentifiers.socialHandle) setSuspectDetails(parsed.suspectIdentifiers.socialHandle);
+    else if (parsed.suspectIdentifiers.phone) setSuspectDetails(`+91-${parsed.suspectIdentifiers.phone}`);
+    if (parsed.suspectIdentifiers.website) setPlatform(parsed.suspectIdentifiers.website);
   };
 
   const [title, setTitle] = useState('');
@@ -165,6 +173,7 @@ export const HarassmentReportPage: React.FC = () => {
                 rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                onAutoDraft={handleAiAutoDraft}
                 placeholder={t('form.harassment.narrativePlaceholder')}
                 required
               />

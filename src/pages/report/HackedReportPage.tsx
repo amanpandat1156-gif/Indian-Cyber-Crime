@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom';
 import { ShieldAlert, ArrowLeft, ArrowRight, CheckCircle2, Check } from 'lucide-react';
 import { Container } from '../../components/common/Container';
 import { AutoFillDemoButton } from '../../components/common/AutoFillDemoButton';
+import { MultilingualVoiceTextarea } from '../../components/common/MultilingualVoiceTextarea';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useDemo } from '../../context/DemoContext';
+import { ParsedIncidentIntent } from '../../services/aiService';
 import { complaintService } from '../../services/complaintService';
 import { Complaint } from '../../types';
 
@@ -29,6 +31,10 @@ export const HackedReportPage: React.FC = () => {
   const [compromiseDetails, setCompromiseDetails] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [createdComplaint, setCreatedComplaint] = useState<Complaint | null>(null);
+
+  const handleAiAutoDraft = (parsed: ParsedIncidentIntent) => {
+    if (parsed.suggestedTitle) setTitle(parsed.suggestedTitle);
+  };
 
   const handleAutoFill = () => {
     const sc = scenarios.hacked;
@@ -220,19 +226,20 @@ export const HackedReportPage: React.FC = () => {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-[#1C252C] mb-1.5">
-                  How did the compromise happen? <span className="text-[#8B2626]">*</span>
-                </label>
-                <textarea
-                  rows={4}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Explain whether you received a phishing link, shared an OTP, or if your password was altered without your knowledge."
-                  className="w-full px-3 py-2 text-sm bg-[#FBFBFA] border border-[#DDE2E4] rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none"
-                  required
-                />
-              </div>
+              <MultilingualVoiceTextarea
+                id="hacked-description"
+                label={
+                  <>
+                    How did the compromise happen? <span className="text-[#8B2626]">*</span>
+                  </>
+                }
+                rows={4}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                onAutoDraft={handleAiAutoDraft}
+                placeholder="Explain whether you received a phishing link, shared an OTP, or if your password was altered without your knowledge."
+                required
+              />
 
               <div>
                 <label className="block text-xs font-bold text-[#1C252C] mb-1.5">

@@ -134,9 +134,9 @@ export const Header: React.FC = () => {
                   </button>
 
                   {langDropdownOpen && (
-                    <div className="absolute right-0 mt-1 w-44 bg-white text-[#1C252C] rounded-md shadow-lg border border-slate-200 py-1.5 z-50 max-h-60 overflow-y-auto">
-                      <div className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
-                        Official Languages
+                    <div className="absolute right-0 mt-1 w-52 bg-white text-[#1C252C] rounded-md shadow-lg border border-slate-200 py-1.5 z-50 max-h-72 overflow-y-auto">
+                      <div className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 flex items-center justify-between">
+                        <span>Official Languages</span>
                       </div>
                       {languages.map((lang) => (
                         <button
@@ -154,6 +154,11 @@ export const Header: React.FC = () => {
                           {currentLang === lang.code && <Check className="w-3 h-3 text-[#12304A]" />}
                         </button>
                       ))}
+
+                      <div className="mt-1 pt-1.5 px-3 border-t border-slate-100 bg-slate-50 text-[10px] text-[#5E6B73] flex items-center gap-1 font-medium">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        <span>Powered by Bhashini &bull; Govt. of India</span>
+                      </div>
                     </div>
                   )}
                 </div>

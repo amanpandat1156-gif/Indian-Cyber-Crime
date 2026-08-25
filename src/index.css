@@ -31,9 +31,9 @@ html.font-scale-larger {
   font-size: 125%; /* 20px base */
 }
 
-/* High Contrast Mode for GIGW Compliance */
+/* High Contrast Mode for GIGW / WCAG 2.1 AAA Compliance */
 html.high-contrast-mode {
-  filter: contrast(115%);
+  filter: contrast(110%);
 }
 
 html.high-contrast-mode body {
@@ -47,33 +47,73 @@ html.high-contrast-mode footer,
 html.high-contrast-mode .bg-white,
 html.high-contrast-mode .bg-\[\#F8F7F3\],
 html.high-contrast-mode .bg-\[\#EBF1F6\],
-html.high-contrast-mode .bg-\[\#FAF2F0\] {
+html.high-contrast-mode .bg-\[\#FAF2F0\],
+html.high-contrast-mode .bg-\[\#FBFBFA\],
+html.high-contrast-mode .bg-\[\#F8F9FA\],
+html.high-contrast-mode .bg-\[\#EDF3F7\] {
   background-color: #0B1622 !important;
   color: #FFFFFF !important;
-  border-color: #384E66 !important;
+  border-color: #5A738E !important;
 }
 
 html.high-contrast-mode h1,
 html.high-contrast-mode h2,
 html.high-contrast-mode h3,
+html.high-contrast-mode h4,
 html.high-contrast-mode .text-\[\#12304A\],
-html.high-contrast-mode .text-\[\#1C252C\] {
-  color: #FFD700 !important; /* Gold high-contrast for titles */
+html.high-contrast-mode .text-\[\#1C252C\],
+html.high-contrast-mode .text-\[\#0B2235\] {
+  color: #FFD700 !important; /* Gold high-contrast for headings & primary accents */
+}
+
+html.high-contrast-mode label,
+html.high-contrast-mode .font-bold {
+  color: #FFEA79 !important;
 }
 
 html.high-contrast-mode p,
 html.high-contrast-mode span,
-html.high-contrast-mode .text-\[\#5E6B73\] {
-  color: #E2E8F0 !important;
+html.high-contrast-mode .text-\[\#5E6B73\],
+html.high-contrast-mode .text-slate-600,
+html.high-contrast-mode .text-slate-700 {
+  color: #F0F4F8 !important;
 }
 
 html.high-contrast-mode a {
-  color: #63B3ED !important;
+  color: #79C0FF !important;
   text-decoration: underline !important;
 }
 
+html.high-contrast-mode input,
+html.high-contrast-mode select,
+html.high-contrast-mode textarea {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #FFD700 !important;
+}
+
+html.high-contrast-mode input::placeholder,
+html.high-contrast-mode textarea::placeholder {
+  color: #A0AEC0 !important;
+}
+
+html.high-contrast-mode button.bg-\[\#12304A\],
+html.high-contrast-mode button.bg-\[\#0B2235\] {
+  background-color: #FFD700 !important;
+  color: #000000 !important;
+  border: 1px solid #FFFFFF !important;
+  font-weight: 700 !important;
+}
+
 html.high-contrast-mode .bg-\[\#8B2626\] {
-  background-color: #E53E3E !important;
+  background-color: #FF4D4D !important;
   color: #000000 !important;
   font-weight: bold !important;
 }
+
+html.high-contrast-mode .border-\[\#DDE2E4\],
+html.high-contrast-mode .border-\[\#CCD3D6\],
+html.high-contrast-mode .border-\[\#E2E6E8\] {
+  border-color: #4A637B !important;
+}
+

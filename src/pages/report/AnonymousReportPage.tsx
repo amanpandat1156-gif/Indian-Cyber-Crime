@@ -6,6 +6,7 @@ import { MultilingualVoiceTextarea } from '../../components/common/MultilingualV
 import { AutoFillDemoButton } from '../../components/common/AutoFillDemoButton';
 import { useLanguage } from '../../context/LanguageContext';
 import { useDemo } from '../../context/DemoContext';
+import { ParsedIncidentIntent } from '../../services/aiService';
 import { complaintService } from '../../services/complaintService';
 import { evidenceService } from '../../services/evidenceService';
 import { Evidence, Complaint } from '../../types';
@@ -21,6 +22,10 @@ export const AnonymousReportPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [createdComplaint, setCreatedComplaint] = useState<Complaint | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const handleAiAutoDraft = (parsed: ParsedIncidentIntent) => {
+    if (parsed.suggestedTitle) setTitle(parsed.suggestedTitle);
+  };
 
   const handleAutoFill = () => {
     const sc = scenarios.anonymous;
@@ -152,6 +157,7 @@ export const AnonymousReportPage: React.FC = () => {
                 rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                onAutoDraft={handleAiAutoDraft}
                 placeholder="Provide URLs, server IPs, group links, and timestamps."
                 required
               />
