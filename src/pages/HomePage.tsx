@@ -12,7 +12,7 @@ export const HomePage: React.FC = () => {
     <div className="w-full bg-[#F8F7F3] min-h-screen">
       <Container size="full" className="max-w-[1400px] py-8 sm:py-10 px-3 sm:px-6 lg:px-8">
         {/* Top 2-Column Hero & Services Area */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-7 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-7 items-start">
           {/* Left Column (approx 68% width on desktop) */}
           <div className="lg:col-span-8 flex flex-col justify-between">
             {/* Hero Header */}
@@ -40,7 +40,7 @@ export const HomePage: React.FC = () => {
           </div>
 
           {/* Right Column (approx 32% width on desktop) */}
-          <div className="lg:col-span-4 flex">
+          <div className="lg:col-span-4 flex flex-col">
             <EmergencySection />
           </div>
         </div>

@@ -12,16 +12,68 @@
   body {
     background-color: #F8F7F3;
     color: #1C252C;
+    transition: font-size 0.15s ease, background-color 0.2s ease, color 0.2s ease;
   }
 
-  /* Accessible focus indicators */
+  /* Accessible focus indicators for GIGW / WCAG 2.1 compliance */
   :focus-visible {
     outline: 2px solid #12304A;
     outline-offset: 2px;
   }
 }
 
-/* Subtle line clamp and typography helpers */
-.text-balance {
-  text-wrap: balance;
+/* Font Scaling Classes for GIGW Accessibility */
+html.font-scale-large {
+  font-size: 112.5%; /* 18px base */
+}
+
+html.font-scale-larger {
+  font-size: 125%; /* 20px base */
+}
+
+/* High Contrast Mode for GIGW Compliance */
+html.high-contrast-mode {
+  filter: contrast(115%);
+}
+
+html.high-contrast-mode body {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+}
+
+html.high-contrast-mode header,
+html.high-contrast-mode nav,
+html.high-contrast-mode footer,
+html.high-contrast-mode .bg-white,
+html.high-contrast-mode .bg-\[\#F8F7F3\],
+html.high-contrast-mode .bg-\[\#EBF1F6\],
+html.high-contrast-mode .bg-\[\#FAF2F0\] {
+  background-color: #0B1622 !important;
+  color: #FFFFFF !important;
+  border-color: #384E66 !important;
+}
+
+html.high-contrast-mode h1,
+html.high-contrast-mode h2,
+html.high-contrast-mode h3,
+html.high-contrast-mode .text-\[\#12304A\],
+html.high-contrast-mode .text-\[\#1C252C\] {
+  color: #FFD700 !important; /* Gold high-contrast for titles */
+}
+
+html.high-contrast-mode p,
+html.high-contrast-mode span,
+html.high-contrast-mode .text-\[\#5E6B73\] {
+  color: #E2E8F0 !important;
+}
+
+html.high-contrast-mode a {
+  color: #63B3ED !important;
+  text-decoration: underline !important;
+}
+
+html.high-contrast-mode .bg-\[\#8B2626\] {
+  background-color: #E53E3E !important;
+  color: #000000 !important;
+  font-weight: bold !important;
 }
