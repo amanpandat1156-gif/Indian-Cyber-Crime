@@ -22,9 +22,6 @@ interface Message {
   timestamp: string;
 }
 
-const STORAGE_SESSION_KEY = 'ncrp_cyberdost_session_id';
-const STORAGE_MESSAGES_KEY = 'ncrp_cyberdost_chat_history';
-
 const QUICK_PROMPTS = [
   '🚨 Report Financial Fraud',
   '📞 How does 1930 work?',
@@ -42,45 +39,15 @@ const INITIAL_BOT_GREETING: Message = {
 export const CyberChatWidget: React.FC = () => {
   const { currentLang } = useLanguage();
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [messages, setMessages] = useState<Message[]>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_MESSAGES_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
-        }
-      }
-    } catch {
-      // Ignore parse errors and fallback
-    }
-    return [INITIAL_BOT_GREETING];
-  });
+  const [messages, setMessages] = useState<Message[]>([INITIAL_BOT_GREETING]);
   const [inputValue, setInputValue] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [sessionId, setSessionId] = useState<string>('');
+  const [sessionId, setSessionId] = useState<string>(() =>
+    `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
+  );
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-
-  // Initialize or retrieve Session ID from localStorage
-  useEffect(() => {
-    let currentSession = localStorage.getItem(STORAGE_SESSION_KEY);
-    if (!currentSession) {
-      currentSession = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-      localStorage.setItem(STORAGE_SESSION_KEY, currentSession);
-    }
-    setSessionId(currentSession);
-  }, []);
-
-  // Persist messages to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_MESSAGES_KEY, JSON.stringify(messages));
-    } catch {
-      // Storage quota or privacy restriction
-    }
-  }, [messages]);
 
   // Auto-scroll to bottom on new message or loading state change
   useEffect(() => {
@@ -113,7 +80,7 @@ export const CyberChatWidget: React.FC = () => {
     setInputValue('');
     setIsLoading(true);
 
-    const activeSession = sessionId || localStorage.getItem(STORAGE_SESSION_KEY) || 'default_session';
+    const activeSession = sessionId || `session_${Date.now()}`;
 
     const response = await sendChatMessage(query, activeSession, currentLang);
 
@@ -142,7 +109,6 @@ export const CyberChatWidget: React.FC = () => {
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
     const newSession = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-    localStorage.setItem(STORAGE_SESSION_KEY, newSession);
     setSessionId(newSession);
     setMessages([newGreeting]);
   };
