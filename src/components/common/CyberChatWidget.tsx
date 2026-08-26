@@ -95,6 +95,7 @@ const RakshikaAvatar: React.FC<{ className?: string }> = ({ className = 'w-8 h-8
 export const CyberChatWidget: React.FC = () => {
   const { currentLang } = useLanguage();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [showWelcomeTooltip, setShowWelcomeTooltip] = useState<boolean>(true);
   const [messages, setMessages] = useState<Message[]>([INITIAL_BOT_GREETING]);
   const [inputValue, setInputValue] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -171,30 +172,63 @@ export const CyberChatWidget: React.FC = () => {
 
   return (
     <>
-      {/* Sleek Floating Launcher Button */}
-      <button
-        type="button"
-        onClick={() => setIsOpen((prev) => !prev)}
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 pl-1.5 pr-4 py-1.5 rounded-full bg-slate-900/95 hover:bg-slate-900 text-white shadow-lg shadow-blue-900/20 border border-slate-700/60 backdrop-blur-md hover:scale-105 active:scale-95 transition-all duration-200 group"
-        aria-label={isOpen ? 'Close Rakshika AI Assistant' : 'Ask Rakshika AI Assistant'}
-      >
-        <div className="relative">
-          <RakshikaAvatar className="w-8 h-8 group-hover:scale-105 transition-transform" />
-          <span className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 ring-2 ring-slate-900"></span>
-          </span>
-        </div>
-        <div className="flex flex-col text-left">
-          <span className="text-xs font-semibold text-white tracking-tight flex items-center gap-1.5">
-            Ask Rakshika
-          </span>
-          <span className="text-[9.5px] text-sky-400 font-normal leading-none">
-            AI Assistant
-          </span>
-        </div>
-        {isOpen && <ChevronDown className="w-3.5 h-3.5 text-slate-400 ml-0.5" />}
-      </button>
+      {/* Floating Container (Bottom-Right) */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-none">
+        {/* Minimal Welcome Callout Tooltip */}
+        {!isOpen && showWelcomeTooltip && (
+          <div className="pointer-events-auto mb-2 flex items-center gap-1.5 bg-white text-slate-800 text-xs font-medium py-1 px-3 rounded-full shadow-md border border-slate-200 whitespace-nowrap animate-in fade-in slide-in-from-bottom-1 duration-200">
+            <button
+              type="button"
+              onClick={() => {
+                setIsOpen(true);
+                setShowWelcomeTooltip(false);
+              }}
+              className="hover:text-blue-600 transition-colors text-left flex items-center gap-1"
+            >
+              <span>💬 Need help? Ask Rakshika</span>
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowWelcomeTooltip(false);
+              }}
+              className="text-slate-400 hover:text-slate-600 rounded-full p-0.5 ml-0.5 transition-colors"
+              aria-label="Dismiss tooltip"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          </div>
+        )}
+
+        {/* Sleek Floating Launcher Button */}
+        <button
+          type="button"
+          onClick={() => {
+            setIsOpen((prev) => !prev);
+            setShowWelcomeTooltip(false);
+          }}
+          className="pointer-events-auto rounded-full p-1.5 pr-4 flex items-center gap-3 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white ring-1 ring-white/15 shadow-xl shadow-indigo-950/30 backdrop-blur-md transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-2xl hover:shadow-indigo-900/40 hover:ring-white/30 active:scale-95 active:translate-y-0 group"
+          aria-label={isOpen ? 'Close Rakshika AI Assistant' : 'Ask Rakshika AI Assistant'}
+        >
+          <div className="relative">
+            <RakshikaAvatar className="w-8 h-8 group-hover:scale-105 transition-transform" />
+            <span className="absolute -bottom-0.5 -right-0.5 relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 ring-2 ring-slate-900"></span>
+            </span>
+          </div>
+          <div className="flex flex-col text-left">
+            <span className="text-xs font-semibold text-white tracking-tight flex items-center gap-1.5">
+              Ask Rakshika
+            </span>
+            <span className="text-[9.5px] text-sky-400 font-normal leading-none">
+              AI Assistant
+            </span>
+          </div>
+          {isOpen && <ChevronDown className="w-3.5 h-3.5 text-slate-400 ml-0.5" />}
+        </button>
+      </div>
 
       {/* Minimalist Chat Drawer */}
       {isOpen && (

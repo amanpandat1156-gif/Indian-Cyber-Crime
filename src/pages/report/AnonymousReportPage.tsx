@@ -18,13 +18,17 @@ export const AnonymousReportPage: React.FC = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Cyber Terrorism / Extremism Material');
+  const [fieldErrors, setFieldErrors] = useState<{ title?: string; description?: string }>({});
   const [evidenceList, setEvidenceList] = useState<Evidence[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [createdComplaint, setCreatedComplaint] = useState<Complaint | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleAiAutoDraft = (parsed: ParsedIncidentIntent) => {
-    if (parsed.suggestedTitle) setTitle(parsed.suggestedTitle);
+    if (parsed.suggestedTitle) {
+      setTitle(parsed.suggestedTitle);
+      setFieldErrors((prev) => ({ ...prev, title: undefined }));
+    }
   };
 
   const handleAutoFill = () => {
@@ -32,6 +36,8 @@ export const AnonymousReportPage: React.FC = () => {
     setCategory(sc.category);
     setTitle(sc.title);
     setDescription(sc.description);
+    setFieldErrors({});
+    setError(null);
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -140,27 +146,47 @@ export const AnonymousReportPage: React.FC = () => {
                 <input
                   type="text"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e) => {
+                    setTitle(e.target.value);
+                    if (e.target.value.trim()) {
+                      setFieldErrors((prev) => ({ ...prev, title: undefined }));
+                    }
+                  }}
                   placeholder="e.g. Malicious website distributing remote access trojan"
-                  className="w-full px-3 py-2 text-sm bg-[#FBFBFA] border border-[#DDE2E4] rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none"
+                  className={`w-full px-3 py-2 text-sm bg-[#FBFBFA] border rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none ${
+                    fieldErrors.title ? 'border-[#B33A3A] bg-rose-50/20' : 'border-[#DDE2E4]'
+                  }`}
                   required
                 />
+                {fieldErrors.title && (
+                  <p className="mt-1 text-xs text-[#B33A3A] font-semibold">{fieldErrors.title}</p>
+                )}
               </div>
 
-              <MultilingualVoiceTextarea
-                id="anonymous-details"
-                label={
-                  <>
-                    {t('form.anonymous.detailsLabel')} <span className="text-[#8B2626]">*</span>
-                  </>
-                }
-                rows={4}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                onAutoDraft={handleAiAutoDraft}
-                placeholder="Provide URLs, server IPs, group links, and timestamps."
-                required
-              />
+              <div>
+                <MultilingualVoiceTextarea
+                  id="anonymous-details"
+                  label={
+                    <>
+                      {t('form.anonymous.detailsLabel')} <span className="text-[#8B2626]">*</span>
+                    </>
+                  }
+                  rows={4}
+                  value={description}
+                  onChange={(e) => {
+                    setDescription(e.target.value);
+                    if (e.target.value.trim()) {
+                      setFieldErrors((prev) => ({ ...prev, description: undefined }));
+                    }
+                  }}
+                  onAutoDraft={handleAiAutoDraft}
+                  placeholder="Provide URLs, server IPs, group links, and timestamps."
+                  required
+                />
+                {fieldErrors.description && (
+                  <p className="mt-1 text-xs text-[#B33A3A] font-semibold">{fieldErrors.description}</p>
+                )}
+              </div>
 
               {/* Attach optional evidence */}
               <div>
@@ -197,9 +223,9 @@ export const AnonymousReportPage: React.FC = () => {
             <div className="mt-8 pt-6 border-t border-[#DDE2E4] flex justify-end">
               <button
                 type="button"
-                disabled={submitting}
+                disabled={submitting || !title.trim() || !description.trim()}
                 onClick={handleSubmit}
-                className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-bold hover:bg-[#0B2235]"
+                className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-bold hover:bg-[#0B2235] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <span>{submitting ? 'Registering Report...' : t('form.anonymous.submitBtn')}</span>
                 <ArrowRight className="w-4 h-4" />

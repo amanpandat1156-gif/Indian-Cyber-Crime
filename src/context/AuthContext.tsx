@@ -71,6 +71,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const res = await authService.switchAccount(userId);
     if (res.success && res.data) {
       setUser(res.data);
+      setIsLoginModalOpen(false);
     }
     setIsLoading(false);
   };

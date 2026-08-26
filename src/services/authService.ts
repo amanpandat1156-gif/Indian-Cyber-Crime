@@ -28,10 +28,14 @@ class AuthService {
       }
 
       const cleanInput = phoneOrEmail.trim();
-      const users = mockDb.getUsers();
-      let matchedUser = users.find(
-        (u) => u.phone === cleanInput || u.email.toLowerCase() === cleanInput.toLowerCase()
-      );
+      let matchedUser = mockDb.getUserById(cleanInput);
+
+      if (!matchedUser) {
+        const users = mockDb.getUsers();
+        matchedUser = users.find(
+          (u) => u.phone === cleanInput || u.email.toLowerCase() === cleanInput.toLowerCase()
+        );
+      }
 
       if (!matchedUser) {
         // Create new citizen user if not exists
@@ -43,7 +47,7 @@ class AuthService {
           accountType: 'new',
           createdAt: new Date().toISOString(),
         };
-        const allUsers = [...users, matchedUser];
+        const allUsers = [...mockDb.getUsers(), matchedUser];
         localStorage.setItem('ncrp_db_users', JSON.stringify(allUsers));
       }
 

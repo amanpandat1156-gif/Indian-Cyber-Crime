@@ -62,6 +62,12 @@ export const FinancialFraudReportPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createdComplaint, setCreatedComplaint] = useState<Complaint | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<{
+    amount?: string;
+    incidentDate?: string;
+    title?: string;
+    description?: string;
+  }>({});
 
   const handleAutoFill = () => {
     const sc = scenarios.financialFraud;
@@ -70,6 +76,8 @@ export const FinancialFraudReportPage: React.FC = () => {
     setPaymentMode(sc.paymentMode);
     setTitle(sc.title);
     setDescription(sc.description);
+    setFieldErrors({});
+    setFormError(null);
     setExtractedData({
       amount: Number(sc.amount),
       date: sc.incidentDate,
@@ -305,14 +313,24 @@ export const FinancialFraudReportPage: React.FC = () => {
                       onChange={(e) => {
                         setAmount(e.target.value);
                         setAiDraftedFields((prev) => ({ ...prev, amount: false }));
+                        if (e.target.value) {
+                          setFieldErrors((prev) => ({ ...prev, amount: undefined }));
+                        }
                       }}
                       placeholder="e.g. 48500"
                       className={`w-full pl-9 pr-3 py-2 text-sm bg-[#FBFBFA] border rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none transition-colors ${
-                        aiDraftedFields.amount ? 'border-emerald-400 bg-emerald-50/30' : 'border-[#DDE2E4]'
+                        fieldErrors.amount
+                          ? 'border-[#B33A3A] bg-rose-50/20'
+                          : aiDraftedFields.amount
+                          ? 'border-emerald-400 bg-emerald-50/30'
+                          : 'border-[#DDE2E4]'
                       }`}
                       required
                     />
                   </div>
+                  {fieldErrors.amount && (
+                    <p className="mt-1 text-xs text-[#B33A3A] font-semibold">{fieldErrors.amount}</p>
+                  )}
                 </div>
 
                 <div>
@@ -335,13 +353,23 @@ export const FinancialFraudReportPage: React.FC = () => {
                       onChange={(e) => {
                         setIncidentDate(e.target.value);
                         setAiDraftedFields((prev) => ({ ...prev, date: false }));
+                        if (e.target.value) {
+                          setFieldErrors((prev) => ({ ...prev, incidentDate: undefined }));
+                        }
                       }}
                       className={`w-full pl-9 pr-3 py-2 text-sm bg-[#FBFBFA] border rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none transition-colors ${
-                        aiDraftedFields.date ? 'border-emerald-400 bg-emerald-50/30' : 'border-[#DDE2E4]'
+                        fieldErrors.incidentDate
+                          ? 'border-[#B33A3A] bg-rose-50/20'
+                          : aiDraftedFields.date
+                          ? 'border-emerald-400 bg-emerald-50/30'
+                          : 'border-[#DDE2E4]'
                       }`}
                       required
                     />
                   </div>
+                  {fieldErrors.incidentDate && (
+                    <p className="mt-1 text-xs text-[#B33A3A] font-semibold">{fieldErrors.incidentDate}</p>
+                  )}
                 </div>
               </div>
 
@@ -402,43 +430,80 @@ export const FinancialFraudReportPage: React.FC = () => {
                   onChange={(e) => {
                     setTitle(e.target.value);
                     setAiDraftedFields((prev) => ({ ...prev, title: false }));
+                    if (e.target.value.trim()) {
+                      setFieldErrors((prev) => ({ ...prev, title: undefined }));
+                    }
                   }}
                   placeholder={t('form.financial.titlePlaceholder')}
                   className={`w-full px-3 py-2 text-sm bg-[#FBFBFA] border rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none transition-colors ${
-                    aiDraftedFields.title ? 'border-emerald-400 bg-emerald-50/30' : 'border-[#DDE2E4]'
+                    fieldErrors.title
+                      ? 'border-[#B33A3A] bg-rose-50/20'
+                      : aiDraftedFields.title
+                      ? 'border-emerald-400 bg-emerald-50/30'
+                      : 'border-[#DDE2E4]'
                   }`}
                   required
                 />
+                {fieldErrors.title && (
+                  <p className="mt-1 text-xs text-[#B33A3A] font-semibold">{fieldErrors.title}</p>
+                )}
               </div>
 
-              <MultilingualVoiceTextarea
-                id="fraud-description"
-                label={
-                  <>
-                    {t('form.financial.narrativeLabel')} <span className="text-[#8B2626]">*</span>
-                  </>
-                }
-                rows={4}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                onAutoDraft={handleAiAutoDraft}
-                placeholder={t('form.financial.narrativePlaceholder')}
-                required
-              />
+              <div>
+                <MultilingualVoiceTextarea
+                  id="fraud-description"
+                  label={
+                    <>
+                      {t('form.financial.narrativeLabel')} <span className="text-[#8B2626]">*</span>
+                    </>
+                  }
+                  rows={4}
+                  value={description}
+                  onChange={(e) => {
+                    setDescription(e.target.value);
+                    if (e.target.value.trim()) {
+                      setFieldErrors((prev) => ({ ...prev, description: undefined }));
+                    }
+                  }}
+                  onAutoDraft={handleAiAutoDraft}
+                  placeholder={t('form.financial.narrativePlaceholder')}
+                  required
+                />
+                {fieldErrors.description && (
+                  <p className="mt-1 text-xs text-[#B33A3A] font-semibold">{fieldErrors.description}</p>
+                )}
+              </div>
             </div>
 
             <div className="mt-8 pt-6 border-t border-[#DDE2E4] flex justify-end">
               <button
                 type="button"
+                disabled={!amount || !title.trim() || !description.trim()}
                 onClick={() => {
-                  if (!amount || !title.trim() || !description.trim()) {
-                    setFormError('Please complete all required fields (Amount, Title, and Description).');
+                  const errors: typeof fieldErrors = {};
+                  if (!amount || Number(amount) <= 0) {
+                    errors.amount = 'Valid estimated loss amount (₹) is required.';
+                  }
+                  if (!incidentDate) {
+                    errors.incidentDate = 'Date of incident is required.';
+                  }
+                  if (!title.trim()) {
+                    errors.title = 'Incident title is required.';
+                  }
+                  if (!description.trim()) {
+                    errors.description = 'Narrative explanation is required.';
+                  }
+
+                  if (Object.keys(errors).length > 0) {
+                    setFieldErrors(errors);
+                    setFormError('Please complete all required fields (*)');
                     return;
                   }
+                  setFieldErrors({});
                   setFormError(null);
                   setCurrentStep(2);
                 }}
-                className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-semibold hover:bg-[#0B2235] transition-colors"
+                className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-semibold hover:bg-[#0B2235] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <span>{t('form.financial.continueToEvidence')}</span>
                 <ArrowRight className="w-4 h-4" />
