@@ -218,10 +218,10 @@ export const FinancialFraudReportPage: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-[#F8F7F3] min-h-screen py-8 sm:py-12">
-      <Container size="md">
+    <div className="w-full bg-[#F8F7F3] min-h-screen py-5 sm:py-12">
+      <Container size="md" className="px-3.5 sm:px-6">
         {/* Top Breadcrumb & 1930 Notice */}
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-5 sm:mb-6 flex flex-wrap items-center justify-between gap-2.5">
           <Link
             to="/"
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#5E6B73] hover:text-[#12304A]"
@@ -241,8 +241,8 @@ export const FinancialFraudReportPage: React.FC = () => {
 
         {/* Step Progression Bar */}
         {currentStep < 5 && (
-          <div className="mb-8">
-            <div className="flex items-center justify-between text-xs font-semibold text-[#5E6B73] mb-2">
+          <div className="mb-6 sm:mb-8">
+            <div className="flex items-center justify-between text-[10.5px] sm:text-xs font-semibold text-[#5E6B73] mb-2">
               <span className={currentStep >= 1 ? 'text-[#12304A] font-bold' : ''}>{t('form.financial.step1')}</span>
               <span className={currentStep >= 2 ? 'text-[#12304A] font-bold' : ''}>{t('form.financial.step2')}</span>
               <span className={currentStep >= 3 ? 'text-[#12304A] font-bold' : ''}>{t('form.financial.step3')}</span>
@@ -266,21 +266,21 @@ export const FinancialFraudReportPage: React.FC = () => {
 
         {/* STEP 1: INCIDENT OVERVIEW & DETAILS */}
         {currentStep === 1 && (
-          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-6 sm:p-8 shadow-card">
+          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-4.5 sm:p-8 shadow-card">
             <div className="mb-6 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
               <div>
-                <div className="text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
+                <div className="text-[10.5px] sm:text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
                   {t('form.financial.badge')}
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A] tracking-tight">
                   {t('form.financial.title')}
                 </h1>
-                <p className="mt-1.5 text-sm text-[#5E6B73]">
+                <p className="mt-1.5 text-xs sm:text-sm text-[#5E6B73]">
                   {t('form.financial.subtitle')}
                 </p>
               </div>
 
-              <AutoFillDemoButton onAutoFill={handleAutoFill} />
+              <AutoFillDemoButton onAutoFill={handleAutoFill} className="w-full sm:w-auto" />
             </div>
 
             <div className="space-y-5">
@@ -438,7 +438,7 @@ export const FinancialFraudReportPage: React.FC = () => {
                   setFormError(null);
                   setCurrentStep(2);
                 }}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-semibold hover:bg-[#0B2235] transition-colors"
+                className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-semibold hover:bg-[#0B2235] transition-colors"
               >
                 <span>{t('form.financial.continueToEvidence')}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -449,21 +449,21 @@ export const FinancialFraudReportPage: React.FC = () => {
 
         {/* STEP 2: EVIDENCE UPLOAD & OCR EXTRACTION SIMULATION */}
         {currentStep === 2 && (
-          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-6 sm:p-8 shadow-card">
+          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-4.5 sm:p-8 shadow-card">
             <div className="mb-6">
-              <div className="text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
+              <div className="text-[10.5px] sm:text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
                 STEP 2 OF 4 &bull; MULTIMODAL VISION OCR
               </div>
-              <h2 className="text-2xl font-bold text-[#12304A] tracking-tight">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#12304A] tracking-tight">
                 {t('form.financial.uploadTitle')}
               </h2>
-              <p className="mt-1 text-sm text-[#5E6B73]">
+              <p className="mt-1 text-xs sm:text-sm text-[#5E6B73]">
                 {t('form.financial.uploadSubtitle')}
               </p>
             </div>
 
             {/* Drag and Drop Zone */}
-            <div className="border-2 border-dashed border-[#CCD3D6] hover:border-[#12304A] rounded-[10px] p-8 text-center bg-[#FBFBFA] transition-colors">
+            <div className="w-full border-2 border-dashed border-[#CCD3D6] hover:border-[#12304A] rounded-[10px] p-5 sm:p-8 text-center bg-[#FBFBFA] transition-colors">
               <input
                 type="file"
                 id="evidence-file-input"
@@ -473,7 +473,7 @@ export const FinancialFraudReportPage: React.FC = () => {
               />
               <label
                 htmlFor="evidence-file-input"
-                className="cursor-pointer flex flex-col items-center justify-center"
+                className="cursor-pointer flex flex-col items-center justify-center w-full"
               >
                 <div className="w-12 h-12 rounded-full bg-[#EDF3F7] text-[#12304A] flex items-center justify-center mb-3">
                   <UploadCloud className="w-6 h-6 stroke-[1.8]" />
@@ -491,25 +491,25 @@ export const FinancialFraudReportPage: React.FC = () => {
                 <div className="text-[11px] font-bold text-[#12304A] uppercase tracking-wider mb-2">
                   ✨ Instant Judge OCR Test Samples:
                 </div>
-                <div className="flex flex-wrap items-center justify-center gap-2">
+                <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-center gap-2">
                   <button
                     type="button"
                     onClick={() => handleAddSampleEvidence('gpay')}
-                    className="text-xs font-semibold px-3 py-1.5 rounded-md bg-[#EDF3F7] text-[#12304A] border border-[#CCDCE8] hover:bg-[#DDE7F0] transition-colors"
+                    className="w-full sm:w-auto min-h-[38px] flex items-center justify-center text-xs font-semibold px-3 py-1.5 rounded-md bg-[#EDF3F7] text-[#12304A] border border-[#CCDCE8] hover:bg-[#DDE7F0] transition-colors"
                   >
                     📄 Sample: GPay Screenshot ₹48,500
                   </button>
                   <button
                     type="button"
                     onClick={() => handleAddSampleEvidence('sms')}
-                    className="text-xs font-semibold px-3 py-1.5 rounded-md bg-[#EDF3F7] text-[#12304A] border border-[#CCDCE8] hover:bg-[#DDE7F0] transition-colors"
+                    className="w-full sm:w-auto min-h-[38px] flex items-center justify-center text-xs font-semibold px-3 py-1.5 rounded-md bg-[#EDF3F7] text-[#12304A] border border-[#CCDCE8] hover:bg-[#DDE7F0] transition-colors"
                   >
                     📄 Sample: Bank SMS ₹15,000
                   </button>
                   <button
                     type="button"
                     onClick={() => handleAddSampleEvidence('chat')}
-                    className="text-xs font-semibold px-3 py-1.5 rounded-md bg-[#EDF3F7] text-[#12304A] border border-[#CCDCE8] hover:bg-[#DDE7F0] transition-colors"
+                    className="w-full sm:w-auto min-h-[38px] flex items-center justify-center text-xs font-semibold px-3 py-1.5 rounded-md bg-[#EDF3F7] text-[#12304A] border border-[#CCDCE8] hover:bg-[#DDE7F0] transition-colors"
                   >
                     📄 Sample: WhatsApp Extortion Chat
                   </button>
@@ -520,7 +520,7 @@ export const FinancialFraudReportPage: React.FC = () => {
             {/* Uploading / Processing Animation */}
             {uploadingStatus !== 'idle' && (
               <div className="mt-6 p-4 rounded-[8px] bg-[#EDF3F7] border border-[#CCDCE8] flex items-center gap-3 animate-pulse">
-                <Loader2 className="w-5 h-5 text-[#12304A] animate-spin" />
+                <Loader2 className="w-5 h-5 text-[#12304A] animate-spin shrink-0" />
                 <div className="text-xs text-[#12304A]">
                   {uploadingStatus === 'uploading'
                     ? 'Uploading evidence file securely...'
@@ -541,7 +541,7 @@ export const FinancialFraudReportPage: React.FC = () => {
                     className="flex items-center justify-between p-3.5 bg-[#F8F9FA] rounded-[8px] border border-[#DDE2E4]"
                   >
                     <div className="flex items-center gap-3">
-                      <FileText className="w-4 h-4 text-[#12304A]" />
+                      <FileText className="w-4 h-4 text-[#12304A] shrink-0" />
                       <div>
                         <div className="text-xs font-bold text-[#1C252C]">{ev.fileName}</div>
                         <div className="text-[11px] text-[#5E6B73]">{ev.fileSize} &bull; {ev.status}</div>
@@ -561,11 +561,11 @@ export const FinancialFraudReportPage: React.FC = () => {
               </div>
             )}
 
-            <div className="mt-8 pt-6 border-t border-[#DDE2E4] flex items-center justify-between">
+            <div className="mt-8 pt-6 border-t border-[#DDE2E4] flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3">
               <button
                 type="button"
                 onClick={() => setCurrentStep(1)}
-                className="px-4 py-2 rounded-md border border-[#DDE2E4] text-xs font-semibold text-[#5E6B73] hover:bg-[#F8F7F3]"
+                className="w-full sm:w-auto min-h-[44px] flex items-center justify-center px-4 py-2 rounded-md border border-[#DDE2E4] text-xs font-semibold text-[#5E6B73] hover:bg-[#F8F7F3]"
               >
                 {t('common.back')}
               </button>
@@ -579,7 +579,7 @@ export const FinancialFraudReportPage: React.FC = () => {
                     setCurrentStep(3);
                   }
                 }}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-semibold hover:bg-[#0B2235] transition-colors"
+                className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-semibold hover:bg-[#0B2235] transition-colors"
               >
                 <span>{t('form.financial.reviewExtractedTitle')}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -590,24 +590,24 @@ export const FinancialFraudReportPage: React.FC = () => {
 
         {/* STEP 3: CITIZEN REVIEW OF EXTRACTED INFORMATION (OCR) */}
         {currentStep === 3 && (
-          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-6 sm:p-8 shadow-card">
+          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-4.5 sm:p-8 shadow-card">
             <div className="mb-6">
-              <div className="text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
+              <div className="text-[10.5px] sm:text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
                 AI ASSISTS. CITIZEN CONFIRMS.
               </div>
-              <h2 className="text-2xl font-bold text-[#12304A] tracking-tight">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#12304A] tracking-tight">
                 {t('form.financial.reviewExtractedTitle')}
               </h2>
-              <p className="mt-1 text-sm text-[#5E6B73]">
+              <p className="mt-1 text-xs sm:text-sm text-[#5E6B73]">
                 {t('form.financial.reviewExtractedSubtitle')}
               </p>
             </div>
 
             {/* Extracted Details Card */}
-            <div className="bg-[#F8F9FA] rounded-[10px] border border-[#DDE2E4] p-5 sm:p-6 mb-6">
-              <div className="flex items-center justify-between pb-4 border-b border-[#E2E6E8] mb-4">
+            <div className="bg-[#F8F9FA] rounded-[10px] border border-[#DDE2E4] p-4 sm:p-6 mb-6">
+              <div className="flex items-center justify-between pb-3 sm:pb-4 border-b border-[#E2E6E8] mb-4 gap-2 flex-wrap">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <ShieldCheck className="w-5 h-5 text-[#237A57]" />
+                  <ShieldCheck className="w-5 h-5 text-[#237A57] shrink-0" />
                   <span className="text-xs font-bold text-[#12304A] uppercase tracking-wider">
                     Extracted Transaction Record
                   </span>
@@ -625,7 +625,7 @@ export const FinancialFraudReportPage: React.FC = () => {
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4 text-xs">
                 <div>
                   <span className="text-[#5E6B73] block mb-1">Debited Amount</span>
                   {isEditingExtracted ? (
@@ -662,7 +662,7 @@ export const FinancialFraudReportPage: React.FC = () => {
                       className="w-full px-2.5 py-1.5 bg-white border border-[#DDE2E4] rounded font-mono text-xs"
                     />
                   ) : (
-                    <strong className="text-xs font-mono text-[#1C252C]">
+                    <strong className="text-xs font-mono text-[#1C252C] break-all">
                       {extractedData?.transactionId || 'TXN8923481092'}
                     </strong>
                   )}
@@ -704,7 +704,7 @@ export const FinancialFraudReportPage: React.FC = () => {
                       className="w-full px-2.5 py-1.5 bg-white border border-[#DDE2E4] rounded text-xs font-mono"
                     />
                   ) : (
-                    <span className="font-mono text-xs text-[#992E2E] bg-rose-50 px-2 py-0.5 rounded border border-rose-200">
+                    <span className="font-mono text-xs text-[#992E2E] bg-rose-50 px-2 py-0.5 rounded border border-rose-200 break-all inline-block">
                       {extractedData?.upiId || 'powerbill.desk@okaxis'}
                     </span>
                   )}
@@ -718,18 +718,18 @@ export const FinancialFraudReportPage: React.FC = () => {
                 type="checkbox"
                 checked={extractedConfirmed}
                 onChange={(e) => setExtractedConfirmed(e.target.checked)}
-                className="mt-0.5 w-4 h-4 rounded text-[#12304A] focus:ring-[#12304A]"
+                className="mt-0.5 w-4 h-4 rounded text-[#12304A] focus:ring-[#12304A] shrink-0"
               />
               <span className="text-xs text-[#12304A] font-medium leading-relaxed">
                 {t('form.financial.confirmCheckbox')}
               </span>
             </label>
 
-            <div className="mt-8 pt-6 border-t border-[#DDE2E4] flex items-center justify-between">
+            <div className="mt-8 pt-6 border-t border-[#DDE2E4] flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3">
               <button
                 type="button"
                 onClick={() => setCurrentStep(2)}
-                className="px-4 py-2 rounded-md border border-[#DDE2E4] text-xs font-semibold text-[#5E6B73] hover:bg-[#F8F7F3]"
+                className="w-full sm:w-auto min-h-[44px] flex items-center justify-center px-4 py-2 rounded-md border border-[#DDE2E4] text-xs font-semibold text-[#5E6B73] hover:bg-[#F8F7F3]"
               >
                 {t('common.back')}
               </button>
@@ -738,7 +738,7 @@ export const FinancialFraudReportPage: React.FC = () => {
                 type="button"
                 disabled={!extractedConfirmed}
                 onClick={() => setCurrentStep(4)}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-semibold hover:bg-[#0B2235] transition-colors disabled:opacity-50"
+                className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-semibold hover:bg-[#0B2235] transition-colors disabled:opacity-50"
               >
                 <span>{t('form.financial.proceedFinal')}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -749,15 +749,15 @@ export const FinancialFraudReportPage: React.FC = () => {
 
         {/* STEP 4: FINAL REVIEW & OFFICIAL SUBMISSION */}
         {currentStep === 4 && (
-          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-6 sm:p-8 shadow-card">
+          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-4.5 sm:p-8 shadow-card">
             <div className="mb-6">
-              <div className="text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
+              <div className="text-[10.5px] sm:text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
                 STEP 4 OF 4
               </div>
-              <h2 className="text-2xl font-bold text-[#12304A] tracking-tight">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#12304A] tracking-tight">
                 {t('form.financial.finalReviewTitle')}
               </h2>
-              <p className="mt-1 text-sm text-[#5E6B73]">
+              <p className="mt-1 text-xs sm:text-sm text-[#5E6B73]">
                 {t('form.financial.finalReviewSubtitle')}
               </p>
             </div>
@@ -778,7 +778,7 @@ export const FinancialFraudReportPage: React.FC = () => {
                 <div className="text-xs font-bold text-[#12304A] uppercase tracking-wider mb-2">
                   Financial Loss Summary
                 </div>
-                <div className="grid grid-cols-2 gap-2 text-[#1C252C]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[#1C252C]">
                   <div><strong>Loss Amount:</strong> ₹{(extractedData?.amount || Number(amount)).toLocaleString('en-IN')}</div>
                   <div><strong>Transaction ID:</strong> {extractedData?.transactionId || 'TXN8923481092'}</div>
                   <div><strong>Bank:</strong> {extractedData?.bankName || 'State Bank of India'}</div>
@@ -799,23 +799,23 @@ export const FinancialFraudReportPage: React.FC = () => {
             </div>
 
             {!user && (
-              <div className="mt-5 p-3.5 rounded-md bg-[#EDF3F7] text-xs text-[#12304A] flex items-center justify-between">
+              <div className="mt-5 p-3.5 rounded-md bg-[#EDF3F7] text-xs text-[#12304A] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                 <span>You are currently not logged in. An acknowledgement token will be provided for tracking.</span>
                 <button
                   type="button"
                   onClick={openLoginModal}
-                  className="font-bold underline ml-2"
+                  className="font-bold underline shrink-0"
                 >
                   Log in to link complaint
                 </button>
               </div>
             )}
 
-            <div className="mt-8 pt-6 border-t border-[#DDE2E4] flex items-center justify-between">
+            <div className="mt-8 pt-6 border-t border-[#DDE2E4] flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3">
               <button
                 type="button"
                 onClick={() => setCurrentStep(3)}
-                className="px-4 py-2 rounded-md border border-[#DDE2E4] text-xs font-semibold text-[#5E6B73] hover:bg-[#F8F7F3]"
+                className="w-full sm:w-auto min-h-[44px] flex items-center justify-center px-4 py-2 rounded-md border border-[#DDE2E4] text-xs font-semibold text-[#5E6B73] hover:bg-[#F8F7F3]"
               >
                 {t('common.back')}
               </button>
@@ -824,7 +824,7 @@ export const FinancialFraudReportPage: React.FC = () => {
                 type="button"
                 disabled={isSubmitting}
                 onClick={handleSubmitComplaint}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-[#12304A] text-white text-sm font-bold hover:bg-[#0B2235] transition-colors disabled:opacity-50 shadow-sm"
+                className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md bg-[#12304A] text-white text-sm font-bold hover:bg-[#0B2235] transition-colors disabled:opacity-50 shadow-sm"
               >
                 {isSubmitting ? (
                   <>
@@ -844,7 +844,7 @@ export const FinancialFraudReportPage: React.FC = () => {
 
         {/* STEP 5: SUBMISSION CONFIRMATION & CASE ID ROUTING */}
         {currentStep === 5 && createdComplaint && (
-          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-6 sm:p-10 shadow-card text-center flex flex-col items-center">
+          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-5 sm:p-10 shadow-card text-center flex flex-col items-center">
             <div className="w-14 h-14 rounded-full bg-[#E6F4EA] text-[#237A57] flex items-center justify-center mb-4">
               <CheckCircle2 className="w-8 h-8" />
             </div>
@@ -857,7 +857,7 @@ export const FinancialFraudReportPage: React.FC = () => {
               {createdComplaint.complaintNumber}
             </h1>
 
-            <p className="mt-2 text-sm text-[#5E6B73] max-w-md leading-relaxed">
+            <p className="mt-2 text-xs sm:text-sm text-[#5E6B73] max-w-md leading-relaxed">
               Your financial fraud complaint has been dispatched to <strong>{createdComplaint.assignedTeam.policeStation}</strong> and the 1930 inter-bank freeze protocol has been triggered.
             </p>
 
@@ -868,17 +868,17 @@ export const FinancialFraudReportPage: React.FC = () => {
               <div><strong>Next Step:</strong> Reviewing bank logs & intermediary payment switches.</div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <Link
                 to={`/track?number=${createdComplaint.complaintNumber}`}
-                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-bold hover:bg-[#0B2235] transition-colors"
+                className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-bold hover:bg-[#0B2235] transition-colors"
               >
                 <span>{t('form.financial.trackBtn')}</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 to="/"
-                className="inline-flex items-center justify-center px-4 py-2.5 rounded-md border border-[#DDE2E4] text-sm font-semibold text-[#5E6B73] hover:bg-[#F8F7F3]"
+                className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center px-4 py-2.5 rounded-md border border-[#DDE2E4] text-sm font-semibold text-[#5E6B73] hover:bg-[#F8F7F3]"
               >
                 {t('common.backToHome')}
               </Link>

@@ -12,10 +12,10 @@ export const NationalEmblem: React.FC<NationalEmblemProps> = ({
   variant = 'dark',
 }) => {
   const sizeMap = {
-    sm: 'h-10 w-auto',
-    md: 'h-12 sm:h-14 w-auto',
-    lg: 'h-16 w-auto',
-    xl: 'h-24 w-auto',
+    sm: 'h-8 sm:h-10 w-auto',
+    md: 'h-10 sm:h-12 md:h-14 w-auto',
+    lg: 'h-12 sm:h-16 w-auto',
+    xl: 'h-16 sm:h-24 w-auto',
   };
 
   return (

@@ -24,7 +24,7 @@ export const AutoFillDemoButton: React.FC<AutoFillDemoButtonProps> = ({
     <button
       type="button"
       onClick={handleClick}
-      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs ${
+      className={`inline-flex items-center justify-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-full text-xs font-bold transition-all shadow-xs min-h-[38px] sm:min-h-0 ${
         filled
           ? 'bg-emerald-600 text-white'
           : 'bg-[#FFF7ED] text-[#9A3412] border border-[#FFEDD5] hover:bg-[#FFEDD5] hover:border-[#FDBA74]'

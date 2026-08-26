@@ -269,14 +269,14 @@ export const MultilingualVoiceTextarea: React.FC<MultilingualVoiceTextareaProps>
         </div>
 
         {/* Multilingual Voice Toolbar */}
-        <div className="flex items-center gap-2 ml-auto flex-wrap">
+        <div className="flex items-center gap-1.5 sm:gap-2 ml-auto flex-wrap">
           {/* AI Auto-Draft Action Button */}
           {onAutoDraft && value && String(value).trim().length > 5 && (
             <button
               type="button"
               onClick={() => runAiDrafting(String(value))}
               disabled={isAnalyzing}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#EDF3F7] border border-[#CCDCE8] text-[#12304A] text-[11px] font-bold hover:bg-[#DDE7F0] transition-colors shadow-2xs disabled:opacity-50"
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 sm:py-1 rounded bg-[#EDF3F7] border border-[#CCDCE8] text-[#12304A] text-[11px] font-bold hover:bg-[#DDE7F0] transition-colors shadow-2xs disabled:opacity-50 min-h-[34px] sm:min-h-0"
               title="Auto-detect amount, suspect UPI/phone, and payment channel from your description"
             >
               {isAnalyzing ? (
@@ -300,7 +300,7 @@ export const MultilingualVoiceTextarea: React.FC<MultilingualVoiceTextareaProps>
                 <label htmlFor={`voice-lang-select-${id || 'default'}`} className="sr-only">
                   Select Speech Language
                 </label>
-                <div className="flex items-center gap-1 px-2 py-1 bg-[#F1F5F8] hover:bg-[#E4ECF2] border border-[#CCD7E0] rounded text-[11px] text-[#12304A] font-medium transition-colors">
+                <div className="flex items-center gap-1 px-2 py-1.5 sm:py-1 bg-[#F1F5F8] hover:bg-[#E4ECF2] border border-[#CCD7E0] rounded text-[11px] text-[#12304A] font-medium transition-colors min-h-[34px] sm:min-h-0">
                   <Globe className="w-3 h-3 text-[#1D60A1] shrink-0" aria-hidden="true" />
                   <select
                     id={`voice-lang-select-${id || 'default'}`}
@@ -325,7 +325,7 @@ export const MultilingualVoiceTextarea: React.FC<MultilingualVoiceTextareaProps>
                   type="button"
                   onClick={toggleListening}
                   disabled={disabled}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#12304A] text-white text-[11px] font-semibold hover:bg-[#0B2235] active:scale-95 transition-all shadow-xs disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 sm:py-1 rounded bg-[#12304A] text-white text-[11px] font-semibold hover:bg-[#0B2235] active:scale-95 transition-all shadow-xs disabled:opacity-50 min-h-[34px] sm:min-h-0"
                   title={`Click to speak in ${selectedLangObj.nativeName}`}
                   aria-label={`Start voice input in ${selectedLangObj.name}`}
                 >
@@ -336,7 +336,7 @@ export const MultilingualVoiceTextarea: React.FC<MultilingualVoiceTextareaProps>
                 <button
                   type="button"
                   onClick={stopListening}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#8B2626] text-white text-[11px] font-bold hover:bg-[#721E1E] active:scale-95 transition-all animate-pulse shadow-sm"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 sm:py-1 rounded bg-[#8B2626] text-white text-[11px] font-bold hover:bg-[#721E1E] active:scale-95 transition-all animate-pulse shadow-sm min-h-[34px] sm:min-h-0"
                   title="Stop recording voice"
                   aria-label="Stop voice input"
                 >

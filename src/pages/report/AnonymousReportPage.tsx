@@ -68,9 +68,9 @@ export const AnonymousReportPage: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-[#F8F7F3] min-h-screen py-8 sm:py-12">
-      <Container size="md">
-        <div className="mb-6">
+    <div className="w-full bg-[#F8F7F3] min-h-screen py-5 sm:py-12">
+      <Container size="md" className="px-3.5 sm:px-6">
+        <div className="mb-5 sm:mb-6">
           <Link
             to="/"
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#5E6B73] hover:text-[#12304A]"
@@ -87,11 +87,11 @@ export const AnonymousReportPage: React.FC = () => {
         )}
 
         {step === 1 ? (
-          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-6 sm:p-8 shadow-card">
+          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-4.5 sm:p-8 shadow-card">
             {/* Transparent Privacy Disclosure */}
-            <div className="mb-6 p-4 rounded-md bg-[#EDF3F7] border border-[#CCDCE8] text-xs text-[#12304A]">
+            <div className="mb-6 p-3.5 sm:p-4 rounded-md bg-[#EDF3F7] border border-[#CCDCE8] text-xs text-[#12304A]">
               <div className="flex items-center gap-2 font-bold mb-1">
-                <Lock className="w-4 h-4 text-[#1D60A1]" />
+                <Lock className="w-4 h-4 text-[#1D60A1] shrink-0" />
                 <span>Transparent Privacy Disclosure</span>
               </div>
               <p className="leading-relaxed text-[#334155]">
@@ -101,18 +101,18 @@ export const AnonymousReportPage: React.FC = () => {
 
             <div className="mb-6 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
               <div>
-                <div className="text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
+                <div className="text-[10.5px] sm:text-[11px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1">
                   {t('form.anonymous.badge')}
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-bold text-[#12304A] tracking-tight">
                   {t('form.anonymous.title')}
                 </h1>
-                <p className="mt-1.5 text-sm text-[#5E6B73]">
+                <p className="mt-1.5 text-xs sm:text-sm text-[#5E6B73]">
                   {t('form.anonymous.subtitle')}
                 </p>
               </div>
 
-              <AutoFillDemoButton onAutoFill={handleAutoFill} />
+              <AutoFillDemoButton onAutoFill={handleAutoFill} className="w-full sm:w-auto" />
             </div>
 
             <div className="space-y-4 text-xs">
@@ -199,7 +199,7 @@ export const AnonymousReportPage: React.FC = () => {
                 type="button"
                 disabled={submitting}
                 onClick={handleSubmit}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-bold hover:bg-[#0B2235]"
+                className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-bold hover:bg-[#0B2235]"
               >
                 <span>{submitting ? 'Registering Report...' : t('form.anonymous.submitBtn')}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -207,7 +207,7 @@ export const AnonymousReportPage: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-8 shadow-card text-center flex flex-col items-center">
+          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-5 sm:p-8 shadow-card text-center flex flex-col items-center">
             <div className="w-14 h-14 rounded-full bg-[#E6F4EA] text-[#237A57] flex items-center justify-center mb-4">
               <CheckCircle2 className="w-8 h-8" />
             </div>
@@ -215,14 +215,14 @@ export const AnonymousReportPage: React.FC = () => {
               ANONYMOUS ACKNOWLEDGEMENT TOKEN
             </div>
             <h1 className="text-2xl font-bold text-[#12304A]">{createdComplaint?.complaintNumber}</h1>
-            <p className="mt-2 text-sm text-[#5E6B73] max-w-md leading-relaxed">
+            <p className="mt-2 text-xs sm:text-sm text-[#5E6B73] max-w-md leading-relaxed">
               Your tip has been forwarded to the Special Cyber Intelligence Unit. Save your acknowledgement token to track the progress of this inquiry.
             </p>
 
-            <div className="mt-6">
+            <div className="mt-6 flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <Link
                 to={`/track?number=${createdComplaint?.complaintNumber}`}
-                className="px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-bold hover:bg-[#0B2235]"
+                className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-bold hover:bg-[#0B2235]"
               >
                 Track Anonymous Token
               </Link>
