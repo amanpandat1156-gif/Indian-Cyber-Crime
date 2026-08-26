@@ -14,23 +14,23 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="w-full bg-[#F8F7F3] min-h-screen">
-      <Container size="full" className="max-w-[1400px] py-8 sm:py-10 px-3 sm:px-6 lg:px-8">
+      <Container size="full" className="max-w-[1400px] py-5 sm:py-10 px-3.5 sm:px-6 lg:px-8">
         {/* Top 2-Column Hero & Services Area */}
-        <div className="flex flex-col lg:flex-row gap-6 lg:gap-7 items-stretch">
+        <div className="flex flex-col lg:flex-row gap-5 sm:gap-6 lg:gap-7 items-stretch">
           {/* Left Column (Hero + 6 Intent Cards + Track Banner) */}
           <div className="flex-1 flex flex-col justify-between min-w-0">
             {/* Hero Header Card with Interactive Grid */}
-            <div className="relative rounded-[12px] p-6 sm:p-7 mb-6 border border-[#E2E6E8] bg-white shadow-2xs overflow-hidden group">
+            <div className="relative rounded-[12px] p-4.5 sm:p-7 mb-4 sm:mb-6 border border-[#E2E6E8] bg-white shadow-2xs overflow-hidden group">
               <InteractiveGridBackground theme="light" gridSpacing={24} interactionRadius={140} />
               
               <div className="relative z-10">
-                <div className="text-[11px] sm:text-[12px] font-bold tracking-widest text-[#1D60A1] uppercase mb-2">
+                <div className="text-[10.5px] sm:text-[12px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1.5 sm:mb-2">
                   {t('home.heroBadge')}
                 </div>
-                <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-bold text-[#12304A] tracking-tight leading-tight">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-bold text-[#12304A] tracking-tight leading-tight">
                   {t('home.howCanWeHelp')}
                 </h1>
-                <p className="mt-2.5 text-sm sm:text-[15px] text-[#5E6B73] leading-relaxed max-w-2xl">
+                <p className="mt-2 sm:mt-2.5 text-xs sm:text-sm md:text-[15px] text-[#5E6B73] leading-relaxed max-w-2xl">
                   {t('home.heroSubtitle')}
                 </p>
               </div>

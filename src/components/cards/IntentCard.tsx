@@ -50,7 +50,7 @@ export const IntentCard: React.FC<IntentCardProps> = ({ item, className = '' }) 
   return (
     <Link
       to={item.href}
-      className={`group flex flex-col justify-between p-5 bg-white rounded-[10px] border border-[#DDE2E4] hover:border-[#12304A]/30 hover:shadow-[0_4px_12px_rgba(18,48,74,0.06)] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#12304A] ${className}`}
+      className={`group flex flex-col justify-between p-4 sm:p-5 bg-white rounded-[10px] border border-[#DDE2E4] hover:border-[#12304A]/30 hover:shadow-[0_4px_12px_rgba(18,48,74,0.06)] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#12304A] ${className}`}
     >
       <div>
         {/* Icon Container with custom background */}

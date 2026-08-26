@@ -40,32 +40,32 @@ export const HelpPage: React.FC = () => {
   }, [activeTab, selectedState, searchQuery]);
 
   return (
-    <div className="w-full bg-[#F8F7F3] min-h-screen py-8 sm:py-12">
-      <Container size="lg">
+    <div className="w-full bg-[#F8F7F3] min-h-screen py-5 sm:py-12">
+      <Container size="lg" className="px-3.5 sm:px-6">
         {/* Header */}
-        <div className="mb-8">
-          <div className="text-[11px] sm:text-[12px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1.5">
+        <div className="mb-6 sm:mb-8">
+          <div className="text-[10.5px] sm:text-[12px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1 sm:mb-1.5">
             CITIZEN SUPPORT & DIRECTORY
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#12304A] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#12304A] tracking-tight">
             Get Help & Official Contacts
           </h1>
-          <p className="mt-2 text-sm text-[#5E6B73] leading-relaxed max-w-3xl">
+          <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-[#5E6B73] leading-relaxed max-w-3xl">
             You don't need to know which government agency to approach. Access the unified national helpline (1930), locate your nearest cyber police station, or find nodal bank fraud escalation desks.
           </p>
         </div>
 
         {/* 1930 Helpline Master Callout Banner */}
-        <div className="mb-8 bg-white rounded-[10px] border border-[#DDE2E4] p-6 sm:p-8 shadow-card flex flex-col md:flex-row items-start md:items-center justify-between gap-6 overflow-hidden relative">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-full bg-[#FDE8E8] text-[#8B2626] flex items-center justify-center shrink-0 mt-0.5">
-              <PhoneCall className="w-6 h-6" />
+        <div className="mb-6 sm:mb-8 bg-white rounded-[10px] border border-[#DDE2E4] p-4.5 sm:p-8 shadow-card flex flex-col md:flex-row items-stretch md:items-center justify-between gap-5 sm:gap-6 overflow-hidden relative">
+          <div className="flex items-start gap-3.5 sm:gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#FDE8E8] text-[#8B2626] flex items-center justify-center shrink-0 mt-0.5">
+              <PhoneCall className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
-              <div className="text-xs font-bold text-[#8B2626] uppercase tracking-wider mb-0.5">
+              <div className="text-[11px] sm:text-xs font-bold text-[#8B2626] uppercase tracking-wider mb-0.5">
                 NATIONAL FINANCIAL FRAUD HELPLINE
               </div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#12304A]">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-[#12304A]">
                 Toll-Free 1930 (24x7)
               </h2>
               <p className="text-xs sm:text-sm text-[#5E6B73] mt-1 max-w-xl">
@@ -76,7 +76,7 @@ export const HelpPage: React.FC = () => {
 
           <a
             href="tel:1930"
-            className="shrink-0 inline-flex items-center gap-2.5 px-6 py-3 rounded-md bg-[#8B2626] text-white font-bold text-sm hover:bg-[#731F1F] transition-colors shadow-sm"
+            className="shrink-0 w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-md bg-[#8B2626] text-white font-bold text-sm hover:bg-[#731F1F] transition-colors shadow-sm"
           >
             <PhoneCall className="w-4 h-4" />
             <span>Call 1930 Now</span>
@@ -84,14 +84,14 @@ export const HelpPage: React.FC = () => {
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex border-b border-[#DDE2E4] mb-6">
+        <div className="flex border-b border-[#DDE2E4] mb-6 overflow-x-auto no-scrollbar gap-1 sm:gap-0">
           <button
             type="button"
             onClick={() => {
               setActiveTab('police');
               setSearchQuery('');
             }}
-            className={`pb-3 px-4 text-sm font-bold transition-colors relative ${
+            className={`pb-3 px-3.5 sm:px-4 text-xs sm:text-sm font-bold transition-colors whitespace-nowrap relative min-h-[40px] sm:min-h-0 ${
               activeTab === 'police'
                 ? 'text-[#12304A] after:content-[""] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2.5px] after:bg-[#12304A]'
                 : 'text-[#5E6B73] hover:text-[#12304A]'
@@ -106,7 +106,7 @@ export const HelpPage: React.FC = () => {
               setActiveTab('banks');
               setSearchQuery('');
             }}
-            className={`pb-3 px-4 text-sm font-bold transition-colors relative ${
+            className={`pb-3 px-3.5 sm:px-4 text-xs sm:text-sm font-bold transition-colors whitespace-nowrap relative min-h-[40px] sm:min-h-0 ${
               activeTab === 'banks'
                 ? 'text-[#12304A] after:content-[""] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2.5px] after:bg-[#12304A]'
                 : 'text-[#5E6B73] hover:text-[#12304A]'
@@ -121,7 +121,7 @@ export const HelpPage: React.FC = () => {
               setActiveTab('contacts');
               setSearchQuery('');
             }}
-            className={`pb-3 px-4 text-sm font-bold transition-colors relative ${
+            className={`pb-3 px-3.5 sm:px-4 text-xs sm:text-sm font-bold transition-colors whitespace-nowrap relative min-h-[40px] sm:min-h-0 ${
               activeTab === 'contacts'
                 ? 'text-[#12304A] after:content-[""] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2.5px] after:bg-[#12304A]'
                 : 'text-[#5E6B73] hover:text-[#12304A]'

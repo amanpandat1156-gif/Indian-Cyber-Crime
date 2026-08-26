@@ -57,8 +57,8 @@ export const LoginModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="relative w-full max-w-md bg-white rounded-[10px] border border-[#DDE2E4] shadow-2xl p-6 sm:p-8 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">
+      <div className="relative w-full max-w-md bg-white rounded-[10px] border border-[#DDE2E4] shadow-2xl p-5 sm:p-8 overflow-y-auto max-h-[90vh] mx-2 sm:mx-0">
         {/* Close Button */}
         <button
           type="button"

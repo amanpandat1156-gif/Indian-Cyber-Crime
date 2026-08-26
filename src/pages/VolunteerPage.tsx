@@ -59,16 +59,16 @@ export const VolunteerPage: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-[#F8F7F3] min-h-screen py-8 sm:py-12">
-      <Container size="md">
-        <div className="mb-8">
-          <div className="text-[11px] sm:text-[12px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1.5">
+    <div className="w-full bg-[#F8F7F3] min-h-screen py-5 sm:py-12">
+      <Container size="md" className="px-3.5 sm:px-6">
+        <div className="mb-6 sm:mb-8">
+          <div className="text-[10.5px] sm:text-[12px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1 sm:mb-1.5">
             CITIZEN COLLABORATION INITIATIVE
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#12304A] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#12304A] tracking-tight">
             Cyber Volunteer Programme
           </h1>
-          <p className="mt-2 text-sm text-[#5E6B73] leading-relaxed">
+          <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-[#5E6B73] leading-relaxed">
             Join the Indian Cybercrime Coordination Centre (I4C) initiative to spread digital safety awareness, identify malicious cyber activities, and protect vulnerable citizens.
           </p>
         </div>
@@ -80,9 +80,9 @@ export const VolunteerPage: React.FC = () => {
         )}
 
         {!submittedApp ? (
-          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-6 sm:p-8 shadow-card">
-            <form onSubmit={handleSubmit} className="space-y-5 text-xs">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-4.5 sm:p-8 shadow-card">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                 <div>
                   <label className="block font-bold text-[#1C252C] mb-1">
                     Full Legal Name <span className="text-[#8B2626]">*</span>
@@ -112,7 +112,7 @@ export const VolunteerPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
                 <div>
                   <label className="block font-bold text-[#1C252C] mb-1">
                     Email Address <span className="text-[#8B2626]">*</span>
@@ -186,7 +186,7 @@ export const VolunteerPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-bold hover:bg-[#0B2235] transition-colors disabled:opacity-50"
+                  className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-bold hover:bg-[#0B2235] transition-colors disabled:opacity-50"
                 >
                   {loading ? (
                     <>
@@ -204,25 +204,25 @@ export const VolunteerPage: React.FC = () => {
             </form>
           </div>
         ) : (
-          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-8 shadow-card text-center flex flex-col items-center">
+          <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-5 sm:p-8 shadow-card text-center flex flex-col items-center">
             <div className="w-14 h-14 rounded-full bg-[#E6F4EA] text-[#237A57] flex items-center justify-center mb-4">
               <HeartHandshake className="w-8 h-8" />
             </div>
             <div className="text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-badge mb-2">
               APPLICATION RECEIVED
             </div>
-            <h2 className="text-2xl font-bold text-[#12304A]">
+            <h2 className="text-xl sm:text-2xl font-bold text-[#12304A]">
               Thank you, {submittedApp.fullName}
             </h2>
-            <p className="mt-2 text-sm text-[#5E6B73] max-w-md">
+            <p className="mt-2 text-xs sm:text-sm text-[#5E6B73] max-w-md">
               Your application has been registered with the I4C Cyber Volunteer Cell. You will receive an invitation for the upcoming regional orientation workshop on <strong>{submittedApp.email}</strong>.
             </p>
 
-            <div className="mt-6">
+            <div className="mt-6 w-full sm:w-auto">
               <button
                 type="button"
                 onClick={() => setSubmittedApp(null)}
-                className="px-5 py-2 rounded-md border border-[#DDE2E4] text-xs font-semibold text-[#12304A] hover:bg-[#F8F7F3]"
+                className="w-full sm:w-auto min-h-[44px] px-5 py-2 rounded-md border border-[#DDE2E4] text-xs font-semibold text-[#12304A] hover:bg-[#F8F7F3]"
               >
                 Submit Another Registration
               </button>

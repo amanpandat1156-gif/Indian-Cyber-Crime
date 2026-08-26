@@ -40,7 +40,7 @@ export const AccountSwitcherDrawer: React.FC = () => {
 
       {/* Expanded Quick-Switch Drawer Menu */}
       {isOpen && (
-        <div className="absolute bottom-14 right-0 w-80 sm:w-96 bg-white rounded-[12px] border border-[#DDE2E4] shadow-2xl p-4 text-xs animate-in slide-in-from-bottom-2 duration-150">
+        <div className="absolute bottom-14 right-0 w-[calc(100vw-32px)] sm:w-96 max-h-[80vh] overflow-y-auto bg-white rounded-[12px] border border-[#DDE2E4] shadow-2xl p-3.5 sm:p-4 text-xs animate-in slide-in-from-bottom-2 duration-150">
           <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#F0F2F3]">
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-[#EA580C]" />

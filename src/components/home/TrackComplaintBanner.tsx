@@ -8,7 +8,7 @@ export const TrackComplaintBanner: React.FC = () => {
   const { t } = useLanguage();
 
   return (
-    <div className="relative mt-4 bg-[#EBF1F6] rounded-[10px] border border-[#DCE4EC] p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 overflow-hidden group">
+    <div className="relative mt-4 bg-[#EBF1F6] rounded-[10px] border border-[#DCE4EC] p-4 sm:p-5 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 overflow-hidden group">
       <InteractiveGridBackground
         theme="navy"
         baseColor="rgba(18, 48, 74, 0.07)"
@@ -22,10 +22,10 @@ export const TrackComplaintBanner: React.FC = () => {
           <FileText className="w-5 h-5 stroke-[1.8]" />
         </div>
         <div>
-          <h2 className="text-[15px] font-bold text-[#12304A] tracking-tight">
+          <h2 className="text-[14.5px] sm:text-[15px] font-bold text-[#12304A] tracking-tight">
             {t('home.trackBannerTitle')}
           </h2>
-          <p className="text-[12.5px] text-[#5E6B73] mt-0.5">
+          <p className="text-[12px] sm:text-[12.5px] text-[#5E6B73] mt-0.5">
             {t('home.trackBannerSubtitle')}
           </p>
         </div>
@@ -33,7 +33,7 @@ export const TrackComplaintBanner: React.FC = () => {
 
       <Link
         to="/track"
-        className="relative z-10 shrink-0 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-[6px] bg-[#12304A] text-white text-[13px] font-semibold hover:bg-[#0B2235] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#12304A]"
+        className="relative z-10 shrink-0 w-full sm:w-auto min-h-[44px] sm:min-h-0 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-[6px] bg-[#12304A] text-white text-[13px] font-semibold hover:bg-[#0B2235] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#12304A]"
       >
         <span>{t('home.trackNow')}</span>
         <ArrowRight className="w-4 h-4" />

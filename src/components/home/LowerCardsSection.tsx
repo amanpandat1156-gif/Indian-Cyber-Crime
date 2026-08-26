@@ -8,7 +8,7 @@ export const LowerCardsSection: React.FC = () => {
     <section className="mt-8" aria-label="Cyber Safety and Portal Information">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left Card: Stay Safe Online with Laptop Illustration */}
-        <div className="relative lg:col-span-7 bg-[#EBF1F6] rounded-[10px] border border-[#DCE4EC] p-6 sm:p-7 flex flex-col sm:flex-row items-center justify-between gap-6 overflow-hidden group">
+        <div className="relative lg:col-span-7 bg-[#EBF1F6] rounded-[10px] border border-[#DCE4EC] p-5 sm:p-7 flex flex-col sm:flex-row items-center justify-between gap-5 sm:gap-6 overflow-hidden group">
           <InteractiveGridBackground
             theme="navy"
             baseColor="rgba(18, 48, 74, 0.06)"
@@ -26,7 +26,7 @@ export const LowerCardsSection: React.FC = () => {
               </span>
             </div>
 
-            <h2 className="text-[19px] sm:text-[21px] font-bold text-[#12304A] tracking-tight leading-snug">
+            <h2 className="text-[18px] sm:text-[21px] font-bold text-[#12304A] tracking-tight leading-snug">
               Simple steps. Stronger security.
             </h2>
 
@@ -46,7 +46,7 @@ export const LowerCardsSection: React.FC = () => {
           </div>
 
           {/* Minimalist Laptop & Plant Illustration */}
-          <div className="relative z-10 shrink-0 w-44 sm:w-52 h-36 flex items-end justify-center">
+          <div className="relative z-10 shrink-0 w-44 sm:w-52 h-32 sm:h-36 flex items-end justify-center">
             <svg viewBox="0 0 200 130" className="w-full h-full">
               {/* Ground Shadow */}
               <ellipse cx="100" cy="115" rx="85" ry="8" fill="#D5E0EA" />
@@ -77,7 +77,7 @@ export const LowerCardsSection: React.FC = () => {
         </div>
 
         {/* Right Card: About the Portal */}
-        <div className="lg:col-span-5 bg-white rounded-[10px] border border-[#DDE2E4] p-6 sm:p-7 flex flex-col justify-between">
+        <div className="lg:col-span-5 bg-white rounded-[10px] border border-[#DDE2E4] p-5 sm:p-7 flex flex-col justify-between">
           <div>
             <div className="text-[11px] font-bold uppercase tracking-widest text-[#5E6B73] mb-2.5">
               ABOUT THE PORTAL

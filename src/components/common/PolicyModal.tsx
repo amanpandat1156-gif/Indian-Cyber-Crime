@@ -32,31 +32,31 @@ export const PolicyModal: React.FC<PolicyModalProps> = ({ isOpen, type, onClose 
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/70 backdrop-blur-xs animate-in fade-in duration-200"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="policy-modal-title"
     >
       <div
-        className="relative w-full max-w-2xl bg-white rounded-[14px] shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[88vh] animate-in zoom-in-95 duration-200"
+        className="relative w-full max-w-2xl bg-white rounded-[12px] sm:rounded-[14px] shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh] mx-2 sm:mx-4 animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50/80">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-[#EBF1F6] text-[#12304A] flex items-center justify-center shrink-0">
-              {type === 'privacy' && <Lock className="w-4.5 h-4.5" />}
-              {type === 'terms' && <Scale className="w-4.5 h-4.5" />}
-              {type === 'accessibility' && <Eye className="w-4.5 h-4.5" />}
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 bg-slate-50/80">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#EBF1F6] text-[#12304A] flex items-center justify-center shrink-0">
+              {type === 'privacy' && <Lock className="w-4 h-4 sm:w-4.5 sm:h-4.5" />}
+              {type === 'terms' && <Scale className="w-4 h-4 sm:w-4.5 sm:h-4.5" />}
+              {type === 'accessibility' && <Eye className="w-4 h-4 sm:w-4.5 sm:h-4.5" />}
             </div>
             <div>
-              <h2 id="policy-modal-title" className="text-lg font-bold text-[#12304A]">
+              <h2 id="policy-modal-title" className="text-base sm:text-lg font-bold text-[#12304A]">
                 {type === 'privacy' && 'Privacy Policy'}
                 {type === 'terms' && 'Terms of Use'}
                 {type === 'accessibility' && 'Accessibility Statement'}
               </h2>
-              <p className="text-xs text-slate-500">
+              <p className="text-[11px] sm:text-xs text-slate-500">
                 National Cyber Crime Reporting Portal &bull; Ministry of Home Affairs
               </p>
             </div>
@@ -73,7 +73,7 @@ export const PolicyModal: React.FC<PolicyModalProps> = ({ isOpen, type, onClose 
         </div>
 
         {/* Modal Scrollable Body */}
-        <div className="p-6 overflow-y-auto space-y-5 text-xs sm:text-sm text-slate-700 leading-relaxed">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-5 text-xs sm:text-sm text-slate-700 leading-relaxed">
           {/* PRIVACY POLICY CONTENT */}
           {type === 'privacy' && (
             <>
@@ -202,8 +202,8 @@ export const PolicyModal: React.FC<PolicyModalProps> = ({ isOpen, type, onClose 
         </div>
 
         {/* Modal Footer */}
-        <div className="px-6 py-3.5 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
-          <span className="text-[11px] text-slate-500">
+        <div className="px-4 sm:px-6 py-3 sm:py-3.5 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
+          <span className="text-[10px] sm:text-[11px] text-slate-500">
             Official Document &bull; Government of India
           </span>
           <button

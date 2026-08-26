@@ -15,9 +15,9 @@ export const PlaceholderPage: React.FC<PlaceholderPageProps> = ({
   stageNote = 'Stage 1 — Pass 1 Foundation Active',
 }) => {
   return (
-    <div className="py-16 sm:py-24">
-      <Container size="sm">
-        <div className="bg-white rounded-card border border-ncrp-border p-8 sm:p-12 shadow-card text-center flex flex-col items-center">
+    <div className="py-8 sm:py-24">
+      <Container size="sm" className="px-3.5 sm:px-6">
+        <div className="bg-white rounded-card border border-ncrp-border p-5 sm:p-12 shadow-card text-center flex flex-col items-center">
           <div className="w-12 h-12 rounded-subtle bg-[#EDF3F7] text-ncrp-navy flex items-center justify-center mb-4">
             <Clock className="w-6 h-6 stroke-[1.75]" />
           </div>

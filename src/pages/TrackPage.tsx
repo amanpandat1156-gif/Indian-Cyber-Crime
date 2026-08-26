@@ -117,17 +117,17 @@ export const TrackPage: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-[#F8F7F3] min-h-screen py-8 sm:py-12">
-      <Container size="full" className="max-w-[1400px] px-3 sm:px-6 lg:px-8">
+    <div className="w-full bg-[#F8F7F3] min-h-screen py-5 sm:py-12">
+      <Container size="full" className="max-w-[1400px] px-3.5 sm:px-6 lg:px-8">
         {/* Top Header & Search Bar */}
-        <div className="mb-8 max-w-3xl">
-          <div className="text-[11px] sm:text-[12px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1.5">
+        <div className="mb-6 sm:mb-8 max-w-3xl">
+          <div className="text-[10.5px] sm:text-[12px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1 sm:mb-1.5">
             CASE UNDERSTANDING & STATUS
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#12304A] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#12304A] tracking-tight">
             Track Your Complaint
           </h1>
-          <p className="mt-2 text-sm text-[#5E6B73] leading-relaxed">
+          <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-[#5E6B73] leading-relaxed">
             Enter your complaint number or token below to understand what happened, what is happening now, and what actions you need to take.
           </p>
 
@@ -137,7 +137,7 @@ export const TrackPage: React.FC = () => {
               e.preventDefault();
               handleSearch();
             }}
-            className="mt-5 flex gap-2"
+            className="mt-4 sm:mt-5 flex flex-col sm:flex-row gap-2 sm:gap-2.5"
           >
             <div className="relative flex-1">
               <Search className="absolute left-3.5 top-3 w-4 h-4 text-[#5E6B73]" />
@@ -146,13 +146,13 @@ export const TrackPage: React.FC = () => {
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="e.g. NCRP-2026-482731"
-                className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#DDE2E4] rounded-[8px] text-sm text-[#1C252C] focus:border-[#12304A] focus:outline-none shadow-xs font-mono"
+                className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#DDE2E4] rounded-[8px] text-sm text-[#1C252C] focus:border-[#12304A] focus:outline-none shadow-xs font-mono min-h-[44px]"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 bg-[#12304A] text-white rounded-[8px] text-sm font-semibold hover:bg-[#0B2235] transition-colors disabled:opacity-50 flex items-center gap-2"
+              className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 bg-[#12304A] text-white rounded-[8px] text-sm font-semibold hover:bg-[#0B2235] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Track'}
             </button>
@@ -176,7 +176,7 @@ export const TrackPage: React.FC = () => {
                     setSearchInput(sample.number);
                     handleSearch(sample.number);
                   }}
-                  className={`px-2.5 py-1 rounded-[6px] border font-mono transition-all text-xs font-semibold ${
+                  className={`px-2.5 py-1.5 sm:py-1 rounded-[6px] border font-mono transition-all text-xs font-semibold min-h-[36px] sm:min-h-0 ${
                     currentComplaint?.complaintNumber === sample.number
                       ? 'bg-[#12304A] text-white border-[#12304A] shadow-xs'
                       : 'bg-[#FBFBFA] text-[#12304A] border-[#CCD3D6] hover:bg-[#EDF3F7]'
@@ -214,14 +214,14 @@ export const TrackPage: React.FC = () => {
         </div>
 
         {error && (
-          <div className="mb-8 p-4 bg-[#FDF2F2] border border-[#F8D7DA] rounded-[10px] text-sm text-[#992E2E] flex items-center gap-3">
+          <div className="mb-6 sm:mb-8 p-4 bg-[#FDF2F2] border border-[#F8D7DA] rounded-[10px] text-sm text-[#992E2E] flex items-center gap-3">
             <AlertCircle className="w-5 h-5 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
         {evidenceSuccess && (
-          <div className="mb-8 p-4 bg-[#E6F4EA] border border-[#C3E6CB] rounded-[10px] text-sm text-[#237A57] flex items-center gap-3 animate-in fade-in duration-150">
+          <div className="mb-6 sm:mb-8 p-4 bg-[#E6F4EA] border border-[#C3E6CB] rounded-[10px] text-sm text-[#237A57] flex items-center gap-3 animate-in fade-in duration-150">
             <CheckCircle2 className="w-5 h-5 shrink-0" />
             <span>{evidenceSuccess}</span>
           </div>
@@ -229,17 +229,17 @@ export const TrackPage: React.FC = () => {
 
         {/* COMPLAINT CASE DETAIL VIEW */}
         {currentComplaint ? (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-8 items-start">
             {/* Left Column (8 Cols): Status Banner + Action Required + Timeline */}
-            <div className="lg:col-span-8 space-y-6">
+            <div className="lg:col-span-8 space-y-5 sm:space-y-6">
               {/* 1. Human-First Status Banner */}
-              <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-6 shadow-card">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#F0F2F3]">
+              <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-4.5 sm:p-6 shadow-card">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-4 border-b border-[#F0F2F3]">
                   <div>
-                    <span className="text-[11px] font-bold tracking-wider text-[#5E6B73] uppercase block mb-1">
+                    <span className="text-[10.5px] sm:text-[11px] font-bold tracking-wider text-[#5E6B73] uppercase block mb-1">
                       COMPLAINT ACKNOWLEDGEMENT
                     </span>
-                    <h2 className="text-xl sm:text-2xl font-bold font-mono text-[#12304A]">
+                    <h2 className="text-lg sm:text-2xl font-bold font-mono text-[#12304A] break-all">
                       {currentComplaint.complaintNumber}
                     </h2>
                   </div>

@@ -71,7 +71,7 @@ export const NotificationDrawer: React.FC = () => {
 
       {/* Notifications Dropdown Panel */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-[10px] border border-[#DDE2E4] shadow-2xl z-50 overflow-hidden animate-in fade-in duration-150">
+        <div className="absolute right-0 mt-2 w-[calc(100vw-28px)] sm:w-96 max-h-[80vh] bg-white rounded-[10px] border border-[#DDE2E4] shadow-2xl z-50 overflow-hidden animate-in fade-in duration-150">
           {/* Header */}
           <div className="p-3.5 bg-[#F8F7F3] border-b border-[#DDE2E4] flex items-center justify-between">
             <div className="flex items-center gap-2">

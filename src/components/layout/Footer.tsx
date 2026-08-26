@@ -9,24 +9,24 @@ export const Footer: React.FC = () => {
 
   return (
     <>
-      <footer className="bg-[#0B2235] text-slate-300 pt-12 pb-8 border-t border-slate-800" aria-label="Portal Footer">
+      <footer className="bg-[#0B2235] text-slate-300 pt-8 sm:pt-12 pb-6 sm:pb-8 border-t border-slate-800" aria-label="Portal Footer">
         <Container size="full" className="max-w-[1400px]">
           {/* 1. Main Navigation & Identity Row */}
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 pb-8 border-b border-slate-800/80 px-2 sm:px-4">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 sm:gap-8 pb-6 sm:pb-8 border-b border-slate-800/80 px-3.5 sm:px-4">
             {/* Left: National Emblem & Portal Title */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3.5 sm:gap-4">
               <img
                 src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg"
                 alt="State Emblem of India"
-                className="w-10 h-14 object-contain brightness-0 invert opacity-90 shrink-0"
+                className="w-9 sm:w-10 h-12 sm:h-14 object-contain brightness-0 invert opacity-90 shrink-0"
                 loading="lazy"
               />
 
               <div className="flex flex-col">
-                <span className="text-[15px] sm:text-[16px] font-bold text-white leading-tight">
+                <span className="text-[14.5px] sm:text-[16px] font-bold text-white leading-tight">
                   National Cyber Crime<br />Reporting Portal
                 </span>
-                <span className="text-[11.5px] text-slate-400 mt-0.5 font-medium">
+                <span className="text-[11px] sm:text-[11.5px] text-slate-400 mt-0.5 font-medium">
                   Ministry of Home Affairs &bull; Government of India
                 </span>
               </div>
@@ -36,42 +36,42 @@ export const Footer: React.FC = () => {
             </div>
 
             {/* Center: Legal & GIGW Mandatory Policy Links */}
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[12.5px] text-slate-300">
-              <Link to="/about" className="hover:text-white hover:underline transition-colors">
+            <div className="flex flex-wrap items-center gap-x-3 sm:gap-x-4 gap-y-2 text-[12px] sm:text-[12.5px] text-slate-300">
+              <Link to="/about" className="hover:text-white hover:underline transition-colors min-h-[38px] sm:min-h-0 inline-flex items-center">
                 About Us
               </Link>
-              <span className="text-slate-600">|</span>
+              <span className="text-slate-600 hidden sm:inline">|</span>
               <button
                 type="button"
                 onClick={() => setActivePolicy('privacy')}
-                className="hover:text-white hover:underline transition-colors focus-visible:outline-none"
+                className="hover:text-white hover:underline transition-colors focus-visible:outline-none min-h-[38px] sm:min-h-0 inline-flex items-center"
               >
                 Privacy
               </button>
-              <span className="text-slate-600">|</span>
+              <span className="text-slate-600 hidden sm:inline">|</span>
               <button
                 type="button"
                 onClick={() => setActivePolicy('terms')}
-                className="hover:text-white hover:underline transition-colors focus-visible:outline-none"
+                className="hover:text-white hover:underline transition-colors focus-visible:outline-none min-h-[38px] sm:min-h-0 inline-flex items-center"
               >
                 Terms of Use
               </button>
-              <span className="text-slate-600">|</span>
+              <span className="text-slate-600 hidden sm:inline">|</span>
               <button
                 type="button"
                 onClick={() => setActivePolicy('accessibility')}
-                className="hover:text-white hover:underline transition-colors focus-visible:outline-none"
+                className="hover:text-white hover:underline transition-colors focus-visible:outline-none min-h-[38px] sm:min-h-0 inline-flex items-center"
               >
                 Accessibility
               </button>
-              <span className="text-slate-600">|</span>
-              <Link to="/help" className="hover:text-white hover:underline transition-colors">
+              <span className="text-slate-600 hidden sm:inline">|</span>
+              <Link to="/help" className="hover:text-white hover:underline transition-colors min-h-[38px] sm:min-h-0 inline-flex items-center">
                 Contact Us
               </Link>
             </div>
 
           {/* Right: Social Follow Links */}
-          <div className="flex items-center gap-4 text-xs text-slate-400">
+          <div className="flex items-center gap-3 sm:gap-4 text-xs text-slate-400">
             <span className="text-[12px] text-slate-400">Follow us</span>
             
             {/* X (Twitter) - CyberDost */}
@@ -79,7 +79,7 @@ export const Footer: React.FC = () => {
               href="https://x.com/CyberDost"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-1.5 rounded bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+              className="p-2 sm:p-1.5 min-w-[36px] min-h-[36px] flex items-center justify-center rounded bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
               aria-label="Official CyberDost on X (Twitter)"
               title="Official CyberDost on X (Twitter)"
             >
@@ -93,7 +93,7 @@ export const Footer: React.FC = () => {
               href="https://www.youtube.com/@CyberDostI4C"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-1.5 rounded bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+              className="p-2 sm:p-1.5 min-w-[36px] min-h-[36px] flex items-center justify-center rounded bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
               aria-label="Official CyberDost I4C YouTube Channel"
               title="Official CyberDost I4C YouTube Channel"
             >
@@ -107,7 +107,7 @@ export const Footer: React.FC = () => {
               href="https://www.facebook.com/CyberDostI4C"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-1.5 rounded bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+              className="p-2 sm:p-1.5 min-w-[36px] min-h-[36px] flex items-center justify-center rounded bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
               aria-label="Official CyberDost I4C Facebook Page"
               title="Official CyberDost I4C Facebook Page"
             >
@@ -121,7 +121,7 @@ export const Footer: React.FC = () => {
               href="https://www.linkedin.com/company/indian-cybercrime-coordination-centre"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-1.5 rounded bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+              className="p-2 sm:p-1.5 min-w-[36px] min-h-[36px] flex items-center justify-center rounded bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
               aria-label="Official Indian Cybercrime Coordination Centre LinkedIn"
               title="Official Indian Cybercrime Coordination Centre LinkedIn"
             >
@@ -133,7 +133,7 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* 2. Mandatory Government Disclaimers, Hosting & GIGW Compliance Information */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 py-6 border-b border-slate-800/80 text-[11.5px] text-slate-400 px-2 sm:px-4 leading-relaxed">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 py-5 sm:py-6 border-b border-slate-800/80 text-[11.5px] text-slate-400 px-3.5 sm:px-4 leading-relaxed">
           <div className="md:col-span-8 space-y-1.5">
             <p className="text-slate-300 font-medium">
               Content Owned, Maintained and Updated by Ministry of Home Affairs, Government of India.
@@ -164,11 +164,11 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* 3. Copyright & Last Updated */}
-        <div className="pt-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11.5px] text-slate-400 px-2 sm:px-4">
+        <div className="pt-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11.5px] text-slate-400 px-3.5 sm:px-4 text-center sm:text-left">
           <div>
             &copy; {new Date().getFullYear()} National Cyber Crime Reporting Portal. All Rights Reserved.
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap justify-center sm:justify-end">
             <span className="text-slate-400">Last updated: 24 April 2025</span>
             <span className="text-slate-700">&bull;</span>
             <span className="text-slate-400">v2.4.0 (GIGW Compliant)</span>

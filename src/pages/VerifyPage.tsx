@@ -99,29 +99,29 @@ export const VerifyPage: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-[#F8F7F3] min-h-screen py-8 sm:py-12">
-      <Container size="md">
+    <div className="w-full bg-[#F8F7F3] min-h-screen py-5 sm:py-12">
+      <Container size="md" className="px-3.5 sm:px-6">
         {/* Header */}
-        <div className="mb-8 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+        <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
           <div>
-            <div className="text-[11px] sm:text-[12px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1.5">
+            <div className="text-[10.5px] sm:text-[12px] font-bold tracking-widest text-[#1D60A1] uppercase mb-1 sm:mb-1.5">
               CITIZEN INTELLIGENCE REPOSITORY
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-[#12304A] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#12304A] tracking-tight">
               Check & Verify Suspicious Numbers or UPI IDs
             </h1>
-            <p className="mt-2 text-sm text-[#5E6B73] leading-relaxed">
+            <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-[#5E6B73] leading-relaxed">
               Verify unknown mobile numbers, UPI VPAs, bank accounts, or websites against cross-state cybercrime reports before making payments or sharing information.
             </p>
           </div>
 
-          <AutoFillDemoButton onAutoFill={handleAutoFill} label="Verify Flagged Scam Number" />
+          <AutoFillDemoButton onAutoFill={handleAutoFill} label="Verify Flagged Scam Number" className="w-full sm:w-auto" />
         </div>
 
         {/* Search Box */}
-        <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-6 sm:p-7 shadow-card mb-8">
+        <div className="bg-white rounded-[10px] border border-[#DDE2E4] p-4.5 sm:p-7 shadow-card mb-6 sm:mb-8">
           {/* Type Selector Tabs */}
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-4">
             {[
               { type: 'MOBILE' as IdentifierType, label: 'Mobile Number', icon: Phone },
               { type: 'UPI_ID' as IdentifierType, label: 'UPI VPA', icon: CreditCard },
@@ -134,7 +134,7 @@ export const VerifyPage: React.FC = () => {
                   key={tab.type}
                   type="button"
                   onClick={() => setIdentifierType(tab.type)}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-md text-xs font-semibold transition-colors min-h-[38px] sm:min-h-0 ${
                     identifierType === tab.type
                       ? 'bg-[#12304A] text-white'
                       : 'bg-[#FBFBFA] text-[#5E6B73] border border-[#DDE2E4] hover:bg-[#F3F6F8]'
@@ -147,7 +147,7 @@ export const VerifyPage: React.FC = () => {
             })}
           </div>
 
-          <form onSubmit={handleVerify} className="flex gap-2">
+          <form onSubmit={handleVerify} className="flex flex-col sm:flex-row gap-2 sm:gap-2.5">
             <div className="relative flex-1">
               <Search className="absolute left-3.5 top-3 w-4 h-4 text-[#5E6B73]" />
               <input
@@ -163,13 +163,13 @@ export const VerifyPage: React.FC = () => {
                     ? 'Enter website domain (e.g. fake-electricity-bill.in)'
                     : 'Enter email address'
                 }
-                className="w-full pl-10 pr-4 py-2.5 bg-[#FBFBFA] border border-[#DDE2E4] rounded-[8px] text-sm text-[#1C252C] focus:bg-white focus:border-[#12304A] focus:outline-none shadow-xs font-mono"
+                className="w-full pl-10 pr-4 py-2.5 bg-[#FBFBFA] border border-[#DDE2E4] rounded-[8px] text-sm text-[#1C252C] focus:bg-white focus:border-[#12304A] focus:outline-none shadow-xs font-mono min-h-[44px]"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 bg-[#12304A] text-white rounded-[8px] text-sm font-semibold hover:bg-[#0B2235] transition-colors disabled:opacity-50 flex items-center gap-2"
+              className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 bg-[#12304A] text-white rounded-[8px] text-sm font-semibold hover:bg-[#0B2235] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Verify'}
             </button>
