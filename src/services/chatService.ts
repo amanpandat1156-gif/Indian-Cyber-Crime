@@ -7,18 +7,22 @@ export interface ChatResponse {
 export const DEFAULT_FALLBACK_MESSAGE =
   'I am having trouble connecting to the support server. For urgent financial fraud, please dial 1930 immediately.';
 
+export const N8N_WEBHOOK_URL =
+  import.meta.env.VITE_N8N_CHAT_WEBHOOK_URL ||
+  'https://achal2.app.n8n.cloud/webhook/cyber-assistant';
+
 /**
  * Sends a chat message to the n8n webhook backend.
- * Falls back gracefully to standard support instructions if the webhook is unset or errors.
+ * Uses hardcoded production fallback URL and flexible JSON/text response parsing.
  */
 export async function sendChatMessage(
   message: string,
-  sessionId: string,
+  sessionId = 'citizen-session',
   language?: string
 ): Promise<ChatResponse> {
-  const webhookUrl = import.meta.env.VITE_N8N_CHAT_WEBHOOK_URL;
+  const endpoint = (N8N_WEBHOOK_URL || '').trim();
 
-  if (!webhookUrl || !webhookUrl.trim()) {
+  if (!endpoint) {
     return {
       reply: DEFAULT_FALLBACK_MESSAGE,
       status: 'fallback',
@@ -26,25 +30,22 @@ export async function sendChatMessage(
   }
 
   try {
-    const response = await fetch(webhookUrl.trim(), {
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        message,
-        sessionId,
+        chatInput: message,
+        message: message,
+        sessionId: sessionId || 'citizen-session',
         language: language || 'en',
         timestamp: new Date().toISOString(),
       }),
     });
 
     if (!response.ok) {
-      console.warn(`[CyberDost AI] n8n Webhook returned HTTP ${response.status}`);
-      return {
-        reply: DEFAULT_FALLBACK_MESSAGE,
-        status: 'error',
-      };
+      throw new Error(`Webhook responded with HTTP status ${response.status}`);
     }
 
     const contentType = response.headers.get('content-type') || '';
@@ -56,10 +57,21 @@ export async function sendChatMessage(
       if (Array.isArray(data) && data.length > 0) {
         const first = data[0];
         replyText =
-          first.reply || first.output || first.text || first.message || (typeof first === 'string' ? first : '');
+          first.output ||
+          first.response ||
+          first.text ||
+          first.message ||
+          first.reply ||
+          (typeof first === 'string' ? first : JSON.stringify(first));
         provider = first.provider;
       } else if (typeof data === 'object' && data !== null) {
-        replyText = data.reply || data.output || data.text || data.message || '';
+        replyText =
+          data.output ||
+          data.response ||
+          data.text ||
+          data.message ||
+          data.reply ||
+          JSON.stringify(data);
         provider = data.provider;
       } else if (typeof data === 'string') {
         replyText = data;
@@ -68,16 +80,24 @@ export async function sendChatMessage(
       replyText = await response.text();
     }
 
+    const cleanedReply = replyText?.trim();
+
     return {
-      reply: replyText.trim() || DEFAULT_FALLBACK_MESSAGE,
+      reply: cleanedReply || DEFAULT_FALLBACK_MESSAGE,
       provider,
       status: 'success',
     };
   } catch (error) {
-    console.error('[CyberDost AI] Webhook request error:', error);
+    console.warn('[Rakshika AI] Webhook request error:', error);
     return {
       reply: DEFAULT_FALLBACK_MESSAGE,
       status: 'error',
     };
   }
 }
+
+export default {
+  sendChatMessage,
+  DEFAULT_FALLBACK_MESSAGE,
+  N8N_WEBHOOK_URL,
+};
