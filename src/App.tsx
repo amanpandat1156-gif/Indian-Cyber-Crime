@@ -6,6 +6,7 @@ import { LanguageProvider } from './context/LanguageContext';
 import { DemoProvider } from './context/DemoContext';
 import { RootLayout } from './components/layout/RootLayout';
 import { AccountSwitcherDrawer } from './components/auth/AccountSwitcherDrawer';
+import { CyberChatWidget } from './components/common/CyberChatWidget';
 
 // Pages
 import { HomePage } from './pages/HomePage';
@@ -90,6 +91,9 @@ export const App: React.FC = () => {
 
             {/* Floating Demo Account Switcher (Development & Testing) */}
             <AccountSwitcherDrawer />
+
+            {/* Floating AI Citizen Assistant Widget (CyberDost AI) */}
+            <CyberChatWidget />
           </DemoProvider>
         </BrowserRouter>
       </AuthProvider>
