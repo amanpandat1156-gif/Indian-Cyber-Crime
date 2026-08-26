@@ -23,6 +23,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useDemo } from '../../context/DemoContext';
 import { aiService, ParsedIncidentIntent } from '../../services/aiService';
+import { ExtractedIncidentDetails } from '../../services/geminiService';
 import { evidenceService } from '../../services/evidenceService';
 import { complaintService } from '../../services/complaintService';
 import { Evidence, ExtractedFinancialData, Complaint } from '../../types';
@@ -54,7 +55,6 @@ export const FinancialFraudReportPage: React.FC = () => {
   const [evidenceList, setEvidenceList] = useState<Evidence[]>([]);
   const [uploadingStatus, setUploadingStatus] = useState<'idle' | 'uploading' | 'processing' | 'processed'>('idle');
   const [extractedData, setExtractedData] = useState<ExtractedFinancialData | null>(null);
-  const [isEditingExtracted, setIsEditingExtracted] = useState(false);
   const [extractedConfirmed, setExtractedConfirmed] = useState(false);
   const [ocrConfidence, setOcrConfidence] = useState<number>(0.98);
 
@@ -62,6 +62,12 @@ export const FinancialFraudReportPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createdComplaint, setCreatedComplaint] = useState<Complaint | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<{
+    amount?: string;
+    incidentDate?: string;
+    title?: string;
+    description?: string;
+  }>({});
 
   const handleAutoFill = () => {
     const sc = scenarios.financialFraud;
@@ -70,6 +76,8 @@ export const FinancialFraudReportPage: React.FC = () => {
     setPaymentMode(sc.paymentMode);
     setTitle(sc.title);
     setDescription(sc.description);
+    setFieldErrors({});
+    setFormError(null);
     setExtractedData({
       amount: Number(sc.amount),
       date: sc.incidentDate,
@@ -107,6 +115,44 @@ export const FinancialFraudReportPage: React.FC = () => {
     });
   };
 
+  const handleAiExtract = (extracted: ExtractedIncidentDetails) => {
+    if (extracted.amountLost) {
+      setAmount(extracted.amountLost);
+    }
+    if (extracted.summaryTitle) {
+      setTitle(extracted.summaryTitle);
+    }
+    if (extracted.incidentSummary) {
+      setDescription(extracted.incidentSummary);
+    }
+    if (extracted.accountType?.toUpperCase().includes('NET')) {
+      setPaymentMode('NET_BANKING');
+    } else if (extracted.accountType?.toUpperCase().includes('CARD')) {
+      setPaymentMode('DEBIT_CARD');
+    } else if (extracted.accountType?.toUpperCase().includes('UPI')) {
+      setPaymentMode('UPI');
+    }
+
+    setExtractedData((prev) => ({
+      amount: Number(extracted.amountLost) || prev?.amount || 48500,
+      date: prev?.date || incidentDate || new Date().toISOString().split('T')[0],
+      transactionId: prev?.transactionId || 'TXN-AUTO-EXTRACT',
+      bankName: extracted.bankOrPlatform || prev?.bankName || 'State Bank of India',
+      upiId: extracted.suspectIdentifier || prev?.upiId || 'powerbill.desk@okaxis',
+      paymentMode: (extracted.accountType?.toUpperCase().includes('NET') ? 'NET_BANKING' : 'UPI') as any,
+    }));
+
+    setAiDraftedFields({
+      amount: Boolean(extracted.amountLost),
+      date: true,
+      paymentMode: true,
+      title: Boolean(extracted.summaryTitle),
+    });
+
+    setFieldErrors({});
+    setFormError(null);
+  };
+
   // Handle Mock/Real File Upload with AI OCR
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -123,15 +169,15 @@ export const FinancialFraudReportPage: React.FC = () => {
       const ocr = await aiService.extractTransactionFromImage(file);
       setOcrConfidence(ocr.confidence);
       setEvidenceList((prev) => [...prev, res.data!]);
-      setExtractedData({
-        amount: ocr.amount || Number(amount) || 48500,
+      setExtractedData((prev) => ({
+        amount: ocr.amount || (amount ? Number(amount) : prev?.amount || 0),
         date: ocr.date || incidentDate || new Date().toISOString().split('T')[0],
-        transactionId: ocr.transactionId || 'TXN8923481092',
-        bankName: ocr.bankName || 'State Bank of India',
-        upiId: ocr.upiId || 'powerbill.desk@okaxis',
-        beneficiaryAccount: ocr.beneficiaryAccount || 'XX4892 (Axis Bank)',
+        transactionId: ocr.transactionId || prev?.transactionId || '',
+        bankName: ocr.bankName || prev?.bankName || '',
+        upiId: ocr.upiId || prev?.upiId || '',
+        beneficiaryAccount: ocr.beneficiaryAccount || prev?.beneficiaryAccount || '',
         paymentMode: ocr.paymentMode || paymentMode,
-      });
+      }));
       setUploadingStatus('idle');
     } else {
       setUploadingStatus('idle');
@@ -188,18 +234,33 @@ export const FinancialFraudReportPage: React.FC = () => {
     setFormError(null);
     setIsSubmitting(true);
 
+    const finalAmount = Number(amount) || extractedData?.amount || 0;
+    const finalFinancialDetails: ExtractedFinancialData = {
+      amount: finalAmount,
+      date: extractedData?.date || incidentDate || new Date().toISOString().split('T')[0],
+      transactionId: extractedData?.transactionId || 'Pending verification',
+      bankName:
+        extractedData?.bankName ||
+        (paymentMode === 'NET_BANKING'
+          ? 'Net Banking'
+          : paymentMode === 'CREDIT_CARD'
+          ? 'Credit Card'
+          : paymentMode === 'DEBIT_CARD'
+          ? 'Debit Card'
+          : paymentMode === 'WALLET'
+          ? 'Digital Wallet'
+          : 'Debited Bank / UPI'),
+      upiId: extractedData?.upiId || undefined,
+      beneficiaryAccount: extractedData?.beneficiaryAccount || undefined,
+      paymentMode: extractedData?.paymentMode || paymentMode,
+    };
+
     const res = await complaintService.createComplaint({
       userId: user?.id,
       type: 'FINANCIAL_FRAUD',
       title: title.trim(),
       description: description.trim(),
-      financialDetails: extractedData || {
-        amount: Number(amount) || 0,
-        date: incidentDate,
-        transactionId: `TXN${Math.floor(1000000000 + Math.random() * 9000000000)}`,
-        bankName: 'State Bank of India',
-        paymentMode,
-      },
+      financialDetails: finalFinancialDetails,
       evidence: evidenceList,
       incidentDetails: {
         incidentDate,
@@ -305,14 +366,24 @@ export const FinancialFraudReportPage: React.FC = () => {
                       onChange={(e) => {
                         setAmount(e.target.value);
                         setAiDraftedFields((prev) => ({ ...prev, amount: false }));
+                        if (e.target.value) {
+                          setFieldErrors((prev) => ({ ...prev, amount: undefined }));
+                        }
                       }}
                       placeholder="e.g. 48500"
                       className={`w-full pl-9 pr-3 py-2 text-sm bg-[#FBFBFA] border rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none transition-colors ${
-                        aiDraftedFields.amount ? 'border-emerald-400 bg-emerald-50/30' : 'border-[#DDE2E4]'
+                        fieldErrors.amount
+                          ? 'border-[#B33A3A] bg-rose-50/20'
+                          : aiDraftedFields.amount
+                          ? 'border-emerald-400 bg-emerald-50/30'
+                          : 'border-[#DDE2E4]'
                       }`}
                       required
                     />
                   </div>
+                  {fieldErrors.amount && (
+                    <p className="mt-1 text-xs text-[#B33A3A] font-semibold">{fieldErrors.amount}</p>
+                  )}
                 </div>
 
                 <div>
@@ -335,13 +406,23 @@ export const FinancialFraudReportPage: React.FC = () => {
                       onChange={(e) => {
                         setIncidentDate(e.target.value);
                         setAiDraftedFields((prev) => ({ ...prev, date: false }));
+                        if (e.target.value) {
+                          setFieldErrors((prev) => ({ ...prev, incidentDate: undefined }));
+                        }
                       }}
                       className={`w-full pl-9 pr-3 py-2 text-sm bg-[#FBFBFA] border rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none transition-colors ${
-                        aiDraftedFields.date ? 'border-emerald-400 bg-emerald-50/30' : 'border-[#DDE2E4]'
+                        fieldErrors.incidentDate
+                          ? 'border-[#B33A3A] bg-rose-50/20'
+                          : aiDraftedFields.date
+                          ? 'border-emerald-400 bg-emerald-50/30'
+                          : 'border-[#DDE2E4]'
                       }`}
                       required
                     />
                   </div>
+                  {fieldErrors.incidentDate && (
+                    <p className="mt-1 text-xs text-[#B33A3A] font-semibold">{fieldErrors.incidentDate}</p>
+                  )}
                 </div>
               </div>
 
@@ -402,43 +483,82 @@ export const FinancialFraudReportPage: React.FC = () => {
                   onChange={(e) => {
                     setTitle(e.target.value);
                     setAiDraftedFields((prev) => ({ ...prev, title: false }));
+                    if (e.target.value.trim()) {
+                      setFieldErrors((prev) => ({ ...prev, title: undefined }));
+                    }
                   }}
                   placeholder={t('form.financial.titlePlaceholder')}
                   className={`w-full px-3 py-2 text-sm bg-[#FBFBFA] border rounded-md focus:bg-white focus:border-[#12304A] focus:outline-none transition-colors ${
-                    aiDraftedFields.title ? 'border-emerald-400 bg-emerald-50/30' : 'border-[#DDE2E4]'
+                    fieldErrors.title
+                      ? 'border-[#B33A3A] bg-rose-50/20'
+                      : aiDraftedFields.title
+                      ? 'border-emerald-400 bg-emerald-50/30'
+                      : 'border-[#DDE2E4]'
                   }`}
                   required
                 />
+                {fieldErrors.title && (
+                  <p className="mt-1 text-xs text-[#B33A3A] font-semibold">{fieldErrors.title}</p>
+                )}
               </div>
 
-              <MultilingualVoiceTextarea
-                id="fraud-description"
-                label={
-                  <>
-                    {t('form.financial.narrativeLabel')} <span className="text-[#8B2626]">*</span>
-                  </>
-                }
-                rows={4}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                onAutoDraft={handleAiAutoDraft}
-                placeholder={t('form.financial.narrativePlaceholder')}
-                required
-              />
+              <div>
+                <MultilingualVoiceTextarea
+                  id="fraud-description"
+                  label={
+                    <>
+                      {t('form.financial.narrativeLabel')} <span className="text-[#8B2626]">*</span>
+                    </>
+                  }
+                  rows={4}
+                  value={description}
+                  onChange={(e) => {
+                    setDescription(e.target.value);
+                    if (e.target.value.trim()) {
+                      setFieldErrors((prev) => ({ ...prev, description: undefined }));
+                    }
+                  }}
+                  categoryContext="Financial Cyber Fraud"
+                  onAutoDraft={handleAiAutoDraft}
+                  onAiExtract={handleAiExtract}
+                  placeholder={t('form.financial.narrativePlaceholder')}
+                  required
+                />
+                {fieldErrors.description && (
+                  <p className="mt-1 text-xs text-[#B33A3A] font-semibold">{fieldErrors.description}</p>
+                )}
+              </div>
             </div>
 
             <div className="mt-8 pt-6 border-t border-[#DDE2E4] flex justify-end">
               <button
                 type="button"
+                disabled={!amount || !title.trim() || !description.trim()}
                 onClick={() => {
-                  if (!amount || !title.trim() || !description.trim()) {
-                    setFormError('Please complete all required fields (Amount, Title, and Description).');
+                  const errors: typeof fieldErrors = {};
+                  if (!amount || Number(amount) <= 0) {
+                    errors.amount = 'Valid estimated loss amount (₹) is required.';
+                  }
+                  if (!incidentDate) {
+                    errors.incidentDate = 'Date of incident is required.';
+                  }
+                  if (!title.trim()) {
+                    errors.title = 'Incident title is required.';
+                  }
+                  if (!description.trim()) {
+                    errors.description = 'Narrative explanation is required.';
+                  }
+
+                  if (Object.keys(errors).length > 0) {
+                    setFieldErrors(errors);
+                    setFormError('Please complete all required fields (*)');
                     return;
                   }
+                  setFieldErrors({});
                   setFormError(null);
                   setCurrentStep(2);
                 }}
-                className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-semibold hover:bg-[#0B2235] transition-colors"
+                className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-[#12304A] text-white text-sm font-semibold hover:bg-[#0B2235] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <span>{t('form.financial.continueToEvidence')}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -617,97 +737,42 @@ export const FinancialFraudReportPage: React.FC = () => {
                 </div>
                 <button
                   type="button"
-                  onClick={() => setIsEditingExtracted(!isEditingExtracted)}
+                  onClick={() => setCurrentStep(1)}
                   className="inline-flex items-center gap-1 text-xs font-bold text-[#12304A] hover:underline"
+                  title="Return to incident details to edit form fields"
                 >
                   <Edit2 className="w-3.5 h-3.5" />
-                  <span>{isEditingExtracted ? 'Done Editing' : 'Edit Details'}</span>
+                  <span>Edit Details</span>
                 </button>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4 text-xs">
                 <div>
                   <span className="text-[#5E6B73] block mb-1">Debited Amount</span>
-                  {isEditingExtracted ? (
-                    <input
-                      type="number"
-                      value={extractedData?.amount || amount}
-                      onChange={(e) =>
-                        setExtractedData((prev) => ({
-                          ...prev!,
-                          amount: Number(e.target.value),
-                        }))
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-[#DDE2E4] rounded font-bold text-sm"
-                    />
-                  ) : (
-                    <strong className="text-sm text-[#12304A]">
-                      ₹{(extractedData?.amount || Number(amount)).toLocaleString('en-IN')}
-                    </strong>
-                  )}
+                  <strong className="text-sm text-[#12304A]">
+                    ₹{(Number(amount) || extractedData?.amount || 0).toLocaleString('en-IN')}
+                  </strong>
                 </div>
 
                 <div>
                   <span className="text-[#5E6B73] block mb-1">Transaction Ref / UTR</span>
-                  {isEditingExtracted ? (
-                    <input
-                      type="text"
-                      value={extractedData?.transactionId || 'TXN8923481092'}
-                      onChange={(e) =>
-                        setExtractedData((prev) => ({
-                          ...prev!,
-                          transactionId: e.target.value,
-                        }))
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-[#DDE2E4] rounded font-mono text-xs"
-                    />
-                  ) : (
-                    <strong className="text-xs font-mono text-[#1C252C] break-all">
-                      {extractedData?.transactionId || 'TXN8923481092'}
-                    </strong>
-                  )}
+                  <strong className="text-xs font-mono text-[#1C252C] break-all">
+                    {extractedData?.transactionId || 'Pending verification'}
+                  </strong>
                 </div>
 
                 <div>
                   <span className="text-[#5E6B73] block mb-1">Debited Bank</span>
-                  {isEditingExtracted ? (
-                    <input
-                      type="text"
-                      value={extractedData?.bankName || 'State Bank of India'}
-                      onChange={(e) =>
-                        setExtractedData((prev) => ({
-                          ...prev!,
-                          bankName: e.target.value,
-                        }))
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-[#DDE2E4] rounded text-xs"
-                    />
-                  ) : (
-                    <span className="font-semibold text-[#1C252C]">
-                      {extractedData?.bankName || 'State Bank of India'}
-                    </span>
-                  )}
+                  <span className="font-semibold text-[#1C252C]">
+                    {extractedData?.bankName || (paymentMode === 'NET_BANKING' ? 'Net Banking' : paymentMode === 'CREDIT_CARD' ? 'Credit Card' : paymentMode === 'DEBIT_CARD' ? 'Debit Card' : paymentMode === 'WALLET' ? 'Digital Wallet' : 'Debited Bank / UPI')}
+                  </span>
                 </div>
 
                 <div>
                   <span className="text-[#5E6B73] block mb-1">Beneficiary Suspect UPI VPA</span>
-                  {isEditingExtracted ? (
-                    <input
-                      type="text"
-                      value={extractedData?.upiId || 'powerbill.desk@okaxis'}
-                      onChange={(e) =>
-                        setExtractedData((prev) => ({
-                          ...prev!,
-                          upiId: e.target.value,
-                        }))
-                      }
-                      className="w-full px-2.5 py-1.5 bg-white border border-[#DDE2E4] rounded text-xs font-mono"
-                    />
-                  ) : (
-                    <span className="font-mono text-xs text-[#992E2E] bg-rose-50 px-2 py-0.5 rounded border border-rose-200 break-all inline-block">
-                      {extractedData?.upiId || 'powerbill.desk@okaxis'}
-                    </span>
-                  )}
+                  <span className="font-mono text-xs text-[#992E2E] bg-rose-50 px-2 py-0.5 rounded border border-rose-200 break-all inline-block">
+                    {extractedData?.upiId || 'Pending identification'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -779,10 +844,10 @@ export const FinancialFraudReportPage: React.FC = () => {
                   Financial Loss Summary
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[#1C252C]">
-                  <div><strong>Loss Amount:</strong> ₹{(extractedData?.amount || Number(amount)).toLocaleString('en-IN')}</div>
-                  <div><strong>Transaction ID:</strong> {extractedData?.transactionId || 'TXN8923481092'}</div>
-                  <div><strong>Bank:</strong> {extractedData?.bankName || 'State Bank of India'}</div>
-                  <div><strong>Beneficiary UPI:</strong> {extractedData?.upiId || 'powerbill.desk@okaxis'}</div>
+                  <div><strong>Loss Amount:</strong> ₹{(Number(amount) || extractedData?.amount || 0).toLocaleString('en-IN')}</div>
+                  <div><strong>Transaction ID:</strong> {extractedData?.transactionId || 'Pending verification'}</div>
+                  <div><strong>Bank:</strong> {extractedData?.bankName || (paymentMode === 'NET_BANKING' ? 'Net Banking' : paymentMode === 'CREDIT_CARD' ? 'Credit Card' : paymentMode === 'DEBIT_CARD' ? 'Debit Card' : paymentMode === 'WALLET' ? 'Digital Wallet' : 'Debited Bank / UPI')}</div>
+                  <div><strong>Beneficiary UPI:</strong> {extractedData?.upiId || 'Pending identification'}</div>
                 </div>
               </div>
 
@@ -864,7 +929,7 @@ export const FinancialFraudReportPage: React.FC = () => {
             <div className="w-full max-w-md bg-[#FBFBFA] border border-[#DDE2E4] rounded-md p-4 my-6 text-left text-xs space-y-1.5">
               <div><strong>Status:</strong> {createdComplaint.statusDisplay}</div>
               <div><strong>Assigned Cell:</strong> {createdComplaint.assignedTeam.name}</div>
-              <div><strong>Reporting Amount:</strong> ₹{createdComplaint.financialDetails?.amount.toLocaleString('en-IN')}</div>
+              <div><strong>Reporting Amount:</strong> ₹{(createdComplaint.financialDetails?.amount !== undefined ? createdComplaint.financialDetails.amount : (Number(amount) || 0)).toLocaleString('en-IN')}</div>
               <div><strong>Next Step:</strong> Reviewing bank logs & intermediary payment switches.</div>
             </div>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Mic, MicOff, Globe, AlertCircle, Sparkles, Volume2, Loader2, Bot } from 'lucide-react';
 import { aiService, ParsedIncidentIntent } from '../../services/aiService';
+import { geminiService, ExtractedIncidentDetails } from '../../services/geminiService';
 
 export interface LanguageOption {
   code: string;
@@ -27,16 +28,20 @@ export interface MultilingualVoiceTextareaProps
   label?: React.ReactNode;
   helperText?: string;
   containerClassName?: string;
+  categoryContext?: string;
   onAutoDraft?: (parsed: ParsedIncidentIntent) => void;
+  onAiExtract?: (extracted: ExtractedIncidentDetails) => void;
 }
 
 export const MultilingualVoiceTextarea: React.FC<MultilingualVoiceTextareaProps> = ({
   label,
   helperText,
   containerClassName = '',
+  categoryContext = 'General Cybercrime',
   value = '',
   onChange,
   onAutoDraft,
+  onAiExtract,
   placeholder,
   rows = 4,
   required,
@@ -114,16 +119,66 @@ export const MultilingualVoiceTextarea: React.FC<MultilingualVoiceTextareaProps>
     triggerChange(nextValue);
   };
 
-  const runAiDrafting = async (textToParse: string) => {
-    if (!onAutoDraft || !textToParse.trim()) return;
+  const runAiExtraction = async (textToParse: string) => {
+    const raw = textToParse.trim();
+    if (!raw) {
+      setErrorMessage('Please type or dictate an incident description first.');
+      return;
+    }
+
     setIsAnalyzing(true);
+    setErrorMessage(null);
+
     try {
-      const parsed = await aiService.parseIncidentIntent(textToParse, selectedLang);
-      onAutoDraft(parsed);
-      setDraftSuccess('AI Drafted Form Fields');
-      setTimeout(() => setDraftSuccess(null), 4000);
+      // 1. Call Gemini Live NLP Extractor
+      const res = await geminiService.extractIncidentDetails(raw, categoryContext);
+
+      if (res.success && res.data) {
+        if (onAiExtract) {
+          onAiExtract(res.data);
+        }
+
+        // Also bridge to onAutoDraft if provided
+        if (onAutoDraft) {
+          onAutoDraft({
+            category: 'other',
+            categoryDisplay: categoryContext,
+            confidence: 0.96,
+            amount: res.data.amountLost ? Number(res.data.amountLost) : undefined,
+            formattedAmount: res.data.amountLost
+              ? `₹${Number(res.data.amountLost).toLocaleString('en-IN')}`
+              : undefined,
+            paymentMethod: res.data.accountType?.toUpperCase().includes('NET')
+              ? 'NET_BANKING'
+              : 'UPI',
+            bankName: res.data.bankOrPlatform,
+            suspectIdentifiers: {
+              phone: res.data.suspectIdentifier?.match(/\d{10}/)?.[0],
+              upiId: res.data.suspectIdentifier?.includes('@') ? res.data.suspectIdentifier : undefined,
+              socialHandle: res.data.suspectIdentifier?.startsWith('@') ? res.data.suspectIdentifier : undefined,
+            },
+            suggestedTitle: res.data.summaryTitle || '',
+            keyPoints: [
+              res.data.amountLost ? `Amount: ₹${res.data.amountLost}` : '',
+              res.data.bankOrPlatform ? `Platform: ${res.data.bankOrPlatform}` : '',
+              res.data.suspectIdentifier ? `Suspect: ${res.data.suspectIdentifier}` : '',
+            ].filter(Boolean),
+            aiDrafted: true,
+          });
+        }
+
+        setDraftSuccess('✨ AI Extracted Form Fields');
+        setTimeout(() => setDraftSuccess(null), 4000);
+      } else {
+        // Fallback to legacy intent parser
+        const parsed = await aiService.parseIncidentIntent(raw, selectedLang);
+        if (onAutoDraft) onAutoDraft(parsed);
+        setDraftSuccess('✨ AI Extracted Form Fields');
+        setTimeout(() => setDraftSuccess(null), 4000);
+      }
     } catch (err) {
-      console.warn('Auto-draft parsing error:', err);
+      console.warn('AI Extraction error:', err);
+      setErrorMessage('Could not auto-extract fields. Please fill manually.');
     } finally {
       setIsAnalyzing(false);
     }
@@ -141,10 +196,10 @@ export const MultilingualVoiceTextarea: React.FC<MultilingualVoiceTextareaProps>
       }
     }
 
-    // Trigger auto-drafting on dictation completion
+    // Trigger auto-extraction on dictation completion
     const finalVal = currentValueRef.current;
     if (finalVal && finalVal.trim().length > 10) {
-      runAiDrafting(finalVal);
+      runAiExtraction(finalVal);
     }
   };
 
@@ -270,24 +325,24 @@ export const MultilingualVoiceTextarea: React.FC<MultilingualVoiceTextareaProps>
 
         {/* Multilingual Voice Toolbar */}
         <div className="flex items-center gap-1.5 sm:gap-2 ml-auto flex-wrap">
-          {/* AI Auto-Draft Action Button */}
-          {onAutoDraft && value && String(value).trim().length > 5 && (
+          {/* AI Extract & Fill Action Button */}
+          {(onAiExtract || onAutoDraft) && value && String(value).trim().length > 3 && (
             <button
               type="button"
-              onClick={() => runAiDrafting(String(value))}
-              disabled={isAnalyzing}
+              onClick={() => runAiExtraction(String(value))}
+              disabled={isAnalyzing || disabled}
               className="inline-flex items-center gap-1 px-2.5 py-1.5 sm:py-1 rounded bg-[#EDF3F7] border border-[#CCDCE8] text-[#12304A] text-[11px] font-bold hover:bg-[#DDE7F0] transition-colors shadow-2xs disabled:opacity-50 min-h-[34px] sm:min-h-0"
-              title="Auto-detect amount, suspect UPI/phone, and payment channel from your description"
+              title="Automatically extract, parse, and auto-populate structured incident fields using Gemini AI"
             >
               {isAnalyzing ? (
                 <>
                   <Loader2 className="w-3 h-3 animate-spin text-[#12304A]" />
-                  <span>AI Drafting...</span>
+                  <span>Extracting fields...</span>
                 </>
               ) : (
                 <>
                   <Sparkles className="w-3 h-3 text-[#1D60A1]" />
-                  <span>✨ AI Auto-Draft</span>
+                  <span>✨ AI Extract & Fill</span>
                 </>
               )}
             </button>
@@ -385,7 +440,7 @@ export const MultilingualVoiceTextarea: React.FC<MultilingualVoiceTextareaProps>
       {draftSuccess && (
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#E6F4EA] border border-[#C3E6CB] text-xs text-[#237A57] font-semibold animate-fadeIn">
           <Bot className="w-3.5 h-3.5 text-[#237A57]" />
-          <span>{draftSuccess} — Please review detected details above.</span>
+          <span>{draftSuccess} — Please review the detected details above.</span>
         </div>
       )}
 
@@ -439,7 +494,7 @@ export const MultilingualVoiceTextarea: React.FC<MultilingualVoiceTextareaProps>
       <div className="flex items-center justify-between text-[11px] text-[#5E6B73]">
         {helperText ? <span>{helperText}</span> : <span />}
         <span className="text-[10.5px] text-[#5E6B73] flex items-center gap-1">
-          <span>Powered by Bhashini &bull; Govt. of India Digital Initiative</span>
+          <span>Powered by Bhashini & Gemini AI &bull; Govt. of India Digital Initiative</span>
         </span>
       </div>
     </div>

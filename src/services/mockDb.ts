@@ -54,7 +54,7 @@ export const MOCK_USERS: User[] = [
     id: 'usr_priya_01',
     name: 'Priya Sharma',
     email: 'priya.sharma@example.in',
-    phone: '9876543210',
+    phone: '9812345678',
     accountType: 'active_complaint',
     createdAt: '2026-08-01T10:00:00Z',
   },
@@ -62,15 +62,15 @@ export const MOCK_USERS: User[] = [
     id: 'usr_rahul_02',
     name: 'Rahul Verma',
     email: 'rahul.verma@example.in',
-    phone: '9811122334',
+    phone: '9876543210',
     accountType: 'resolved',
     createdAt: '2026-07-15T14:30:00Z',
   },
   {
     id: 'usr_new_03',
-    name: 'New Citizen',
-    email: 'new.citizen@example.in',
-    phone: '9900011222',
+    name: 'Citizen User',
+    email: 'citizen@example.in',
+    phone: '9800000000',
     accountType: 'new',
     createdAt: '2026-08-25T08:00:00Z',
   },
@@ -78,11 +78,51 @@ export const MOCK_USERS: User[] = [
     id: 'usr_multi_04',
     name: 'Ananya Patel',
     email: 'ananya.patel@example.in',
-    phone: '9765432100',
+    phone: '9822334455',
     accountType: 'multiple',
     createdAt: '2026-05-20T11:00:00Z',
   },
 ];
+
+export const DEMO_USER_ALIASES: Record<string, string> = {
+  // Priya Sharma
+  'priya': 'usr_priya_01',
+  'priya-sharma': 'usr_priya_01',
+  'priya_sharma': 'usr_priya_01',
+  'usr_priya_01': 'usr_priya_01',
+  'priya.sharma@example.in': 'usr_priya_01',
+  '9812345678': 'usr_priya_01',
+
+  // Rahul Verma
+  'rahul': 'usr_rahul_02',
+  'rahul-verma': 'usr_rahul_02',
+  'rahul_verma': 'usr_rahul_02',
+  'usr_rahul_02': 'usr_rahul_02',
+  'rahul.verma@example.in': 'usr_rahul_02',
+  '9876543210': 'usr_rahul_02',
+  '9811122334': 'usr_rahul_02',
+
+  // New Citizen / Citizen User
+  'new': 'usr_new_03',
+  'new-citizen': 'usr_new_03',
+  'new_citizen': 'usr_new_03',
+  'citizen': 'usr_new_03',
+  'citizen-user': 'usr_new_03',
+  'usr_new_03': 'usr_new_03',
+  'citizen@example.in': 'usr_new_03',
+  'new.citizen@example.in': 'usr_new_03',
+  '9800000000': 'usr_new_03',
+  '9900011222': 'usr_new_03',
+
+  // Ananya Patel
+  'ananya': 'usr_multi_04',
+  'ananya-patel': 'usr_multi_04',
+  'ananya_patel': 'usr_multi_04',
+  'usr_multi_04': 'usr_multi_04',
+  'ananya.patel@example.in': 'usr_multi_04',
+  '9822334455': 'usr_multi_04',
+  '9765432100': 'usr_multi_04',
+};
 
 export const INITIAL_COMPLAINTS: Complaint[] = [
   // PERSONA 1: PRIYA SHARMA - Active Financial Fraud with Action Required (NCRP-2026-849201)
@@ -821,8 +861,32 @@ class MockDatabase {
     return this.getStorage(STORAGE_KEYS.USERS, MOCK_USERS);
   }
 
-  getUserById(id: string): User | undefined {
-    return this.getUsers().find((u) => u.id === id);
+  getUserById(idOrKey: string): User | undefined {
+    if (!idOrKey) return undefined;
+    const cleanKey = idOrKey.trim().toLowerCase();
+    const resolvedId = DEMO_USER_ALIASES[cleanKey] || idOrKey;
+
+    const users = this.getUsers();
+    let found = users.find(
+      (u) =>
+        u.id === resolvedId ||
+        u.id.toLowerCase() === cleanKey ||
+        u.email.toLowerCase() === cleanKey ||
+        u.phone === cleanKey ||
+        u.name.toLowerCase() === cleanKey
+    );
+
+    if (!found) {
+      found = MOCK_USERS.find(
+        (u) =>
+          u.id === resolvedId ||
+          u.id.toLowerCase() === cleanKey ||
+          u.email.toLowerCase() === cleanKey ||
+          u.phone === cleanKey ||
+          u.name.toLowerCase() === cleanKey
+      );
+    }
+    return found;
   }
 
   getCurrentUserId(): string {

@@ -50,10 +50,16 @@ export const LoginModal: React.FC = () => {
   };
 
   const handleQuickAccountSelect = async (userId: string) => {
+    setError(null);
     setLoading(true);
-    await switchAccount(userId);
-    setLoading(false);
-    closeLoginModal();
+    try {
+      await switchAccount(userId);
+    } catch {
+      setError('Failed to switch to selected demo account.');
+    } finally {
+      setLoading(false);
+      closeLoginModal();
+    }
   };
 
   return (

@@ -66,10 +66,12 @@ export const DEMO_SCENARIOS = {
     suspectDetails: 'Phone: +91-9870001122, Instagram Handle: @fake_profile_victim',
   },
   hacked: {
-    accountType: 'Social Media (Instagram / WhatsApp / Facebook)',
-    title: 'WhatsApp and Instagram Account Hijacked via OTP Phishing',
-    description: 'Attacker contacted pretending to be customer support, requested 6-digit verification code, and immediately enabled their own Authenticator app, locking me out of my account.',
-    compromiseDetails: 'Occurred on 25 Aug 2026 around 4:00 PM. Linked email changed to hacker_temp@mail.ru.',
+    accountType: 'Instagram & WhatsApp',
+    title: 'WhatsApp account takeover via malicious SMS OTP link',
+    description:
+      'Received a fake verification SMS appearing to be from support, clicked the phishing link, and entered the OTP. Lost access within 10 minutes.',
+    compromiseDetails:
+      'Attacker is currently messaging my family contacts requesting emergency UPI transfers of ₹5,000.',
   },
   anonymous: {
     category: 'Cyber Terrorism / Extremism Material',
