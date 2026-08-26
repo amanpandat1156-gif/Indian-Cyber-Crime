@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useDemo } from '../../context/DemoContext';
 import { ParsedIncidentIntent } from '../../services/aiService';
+import { ExtractedIncidentDetails } from '../../services/geminiService';
 import { complaintService } from '../../services/complaintService';
 import { Complaint } from '../../types';
 
@@ -40,6 +41,14 @@ export const HackedReportPage: React.FC = () => {
       setTitle(parsed.suggestedTitle);
       setFieldErrors((prev) => ({ ...prev, title: undefined }));
     }
+  };
+
+  const handleAiExtract = (extracted: ExtractedIncidentDetails) => {
+    if (extracted.accountType) setAccountType(extracted.accountType);
+    if (extracted.summaryTitle) setTitle(extracted.summaryTitle);
+    if (extracted.incidentSummary) setDescription(extracted.incidentSummary);
+    if (extracted.scammerDemands) setCompromiseDetails(extracted.scammerDemands);
+    setFieldErrors({});
   };
 
   const handleAutoFill = () => {
@@ -345,7 +354,9 @@ export const HackedReportPage: React.FC = () => {
                       setFieldErrors((prev) => ({ ...prev, description: undefined }));
                     }
                   }}
+                  categoryContext="Account Compromise & Hijacking"
                   onAutoDraft={handleAiAutoDraft}
+                  onAiExtract={handleAiExtract}
                   placeholder="Explain whether you received a phishing link, shared an OTP, or if your password was altered without your knowledge."
                   required
                 />

@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useDemo } from '../../context/DemoContext';
 import { ParsedIncidentIntent } from '../../services/aiService';
+import { ExtractedIncidentDetails } from '../../services/geminiService';
 import { complaintService } from '../../services/complaintService';
 import { evidenceService } from '../../services/evidenceService';
 import { Evidence, Complaint } from '../../types';
@@ -52,6 +53,23 @@ export const HarassmentReportPage: React.FC = () => {
     if (parsed.suspectIdentifiers.website) {
       setPlatform(parsed.suspectIdentifiers.website);
     }
+  };
+
+  const handleAiExtract = (extracted: ExtractedIncidentDetails) => {
+    if (extracted.bankOrPlatform || extracted.accountType) {
+      setPlatform(extracted.bankOrPlatform || extracted.accountType || '');
+    }
+    if (extracted.summaryTitle) {
+      setTitle(extracted.summaryTitle);
+    }
+    if (extracted.incidentSummary) {
+      setDescription(extracted.incidentSummary);
+    }
+    if (extracted.suspectIdentifier) {
+      setSuspectDetails(extracted.suspectIdentifier);
+    }
+    setFieldErrors({});
+    setError(null);
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -202,7 +220,9 @@ export const HarassmentReportPage: React.FC = () => {
                       setFieldErrors((prev) => ({ ...prev, description: undefined }));
                     }
                   }}
+                  categoryContext="Cyber Harassment & Threats"
                   onAutoDraft={handleAiAutoDraft}
+                  onAiExtract={handleAiExtract}
                   placeholder={t('form.harassment.narrativePlaceholder')}
                   required
                 />

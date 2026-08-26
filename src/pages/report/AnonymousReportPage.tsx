@@ -7,6 +7,7 @@ import { AutoFillDemoButton } from '../../components/common/AutoFillDemoButton';
 import { useLanguage } from '../../context/LanguageContext';
 import { useDemo } from '../../context/DemoContext';
 import { ParsedIncidentIntent } from '../../services/aiService';
+import { ExtractedIncidentDetails } from '../../services/geminiService';
 import { complaintService } from '../../services/complaintService';
 import { evidenceService } from '../../services/evidenceService';
 import { Evidence, Complaint } from '../../types';
@@ -29,6 +30,17 @@ export const AnonymousReportPage: React.FC = () => {
       setTitle(parsed.suggestedTitle);
       setFieldErrors((prev) => ({ ...prev, title: undefined }));
     }
+  };
+
+  const handleAiExtract = (extracted: ExtractedIncidentDetails) => {
+    if (extracted.summaryTitle) {
+      setTitle(extracted.summaryTitle);
+    }
+    if (extracted.incidentSummary) {
+      setDescription(extracted.incidentSummary);
+    }
+    setFieldErrors({});
+    setError(null);
   };
 
   const handleAutoFill = () => {
@@ -179,7 +191,9 @@ export const AnonymousReportPage: React.FC = () => {
                       setFieldErrors((prev) => ({ ...prev, description: undefined }));
                     }
                   }}
+                  categoryContext="Confidential Cyber Threat Tip"
                   onAutoDraft={handleAiAutoDraft}
+                  onAiExtract={handleAiExtract}
                   placeholder="Provide URLs, server IPs, group links, and timestamps."
                   required
                 />
